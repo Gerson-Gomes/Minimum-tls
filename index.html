@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KINETIX | 1-TLS Trip Performance Footwear</title>
-<meta name="description" content="Ultra-lightweight performance footwear store loaded in a single 14kB TLS trip. Zero webfonts, minified inline SVGs, Brotli compressed.">
+<title>KINETIX | Next-Gen Footwear & 1-TLS Architecture</title>
+<meta name="description" content="Multi-page concept shoe store loaded in a single 14kB TLS trip. Home, Store, and About Us pages in under 14,336 bytes Brotli.">
 <style>
 :root{--bg:#080b11;--surface:#101522;--surface-card:#151c2e;--border:rgba(255,255,255,0.08);--text:#f8fafc;--muted:#94a3b8;--primary:#6366f1;--primary-glow:rgba(99,102,241,0.35);--accent:#06b6d4;--accent-pink:#ec4899;--success:#10b981;--warning:#f59e0b;--radius:14px;--font:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
 [data-theme="cyan"]{--primary:#06b6d4;--primary-glow:rgba(6,182,212,0.35);--accent:#38bdf8}
@@ -28,11 +28,12 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,11,17,0.85);backdrop-
 .logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:10px;display:grid;place-items:center;box-shadow:0 0 18px var(--primary-glow);transition:transform .2s}
 .logo:hover .logo-icon{transform:scale(1.05) rotate(-5deg)}
 .nav-links{display:flex;gap:1.75rem;list-style:none}
-.nav-links a{color:var(--muted);font-weight:600;font-size:0.95rem;transition:color .2s}
+.nav-links a{color:var(--muted);font-weight:700;font-size:0.95rem;transition:color .2s;padding:6px 0;position:relative}
 .nav-links a:hover,.nav-links a.active{color:var(--text)}
+.nav-links a.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--primary);border-radius:2px}
 
-.search-box{display:flex;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 12px;gap:6px;width:200px;transition:border-color .2s,width .2s}
-.search-box:focus-within{border-color:var(--primary);width:240px}
+.search-box{display:flex;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 12px;gap:6px;width:180px;transition:border-color .2s,width .2s}
+.search-box:focus-within{border-color:var(--primary);width:220px}
 .search-box input{background:none;border:none;outline:none;color:var(--text);font-size:0.85rem;width:100%}
 
 .theme-dots{display:flex;gap:6px;align-items:center}
@@ -42,6 +43,11 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,11,17,0.85);backdrop-
 .cart-btn{position:relative;background:var(--surface);border:1px solid var(--border);width:44px;height:44px;border-radius:12px;display:grid;place-items:center;transition:all .2s}
 .cart-btn:hover{border-color:var(--primary);color:var(--accent);transform:translateY(-1px)}
 .cart-badge{position:absolute;top:-4px;right:-4px;background:var(--primary);color:#fff;font-size:0.72rem;font-weight:800;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--bg);box-shadow:0 0 10px var(--primary-glow)}
+
+/* Page Views Container */
+.page-view{display:none;animation:fadeIn .3s ease-in-out}
+.page-view.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
 /* Hero */
 .hero{padding:3.5rem 0 2.5rem;display:grid;grid-template-columns:1fr 1.15fr;gap:3rem;align-items:center}
@@ -64,7 +70,7 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,11,17,0.85);backdrop-
 .tag-3{top:50%;right:-12px;transform:translateY(-50%)}
 
 /* Features Bar */
-.features-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.5rem;padding:1.75rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:3.5rem}
+.features-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.5rem;padding:1.75rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin:2.5rem 0 3.5rem}
 .feat-item{display:flex;align-items:center;gap:1rem}
 .feat-icon{width:46px;height:46px;background:rgba(99,102,241,0.12);border-radius:12px;display:grid;place-items:center;color:var(--primary);font-size:1.2rem}
 .feat-title{font-weight:700;font-size:0.95rem}
@@ -100,14 +106,12 @@ header{position:sticky;top:0;z-index:100;background:rgba(8,11,17,0.85);backdrop-
 .btn-add{background:var(--primary);color:#fff;border:none;padding:0 16px;border-radius:10px;font-weight:700;font-size:0.88rem;height:38px;display:flex;align-items:center;gap:6px;transition:all .2s}
 .btn-add:hover{background:#4338ca;box-shadow:0 4px 14px var(--primary-glow)}
 
-/* Reviews */
-.reviews-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-bottom:4rem}
-.rev-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.5rem}
-.rev-user{display:flex;align-items:center;gap:12px;margin-bottom:1rem}
-.rev-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));display:grid;place-items:center;font-weight:800;font-size:0.95rem}
-.rev-name{font-weight:800;font-size:0.95rem}
-.rev-verified{color:var(--success);font-size:0.75rem;font-weight:600;display:flex;align-items:center;gap:4px}
-.rev-text{color:var(--muted);font-size:0.92rem;font-style:italic}
+/* About Page Styles */
+.about-hero{text-align:center;padding:3.5rem 1rem;background:radial-gradient(circle at center,rgba(99,102,241,0.15),transparent 70%);border-radius:24px;border:1px solid var(--border);margin-bottom:3rem}
+.about-title{font-size:3rem;font-weight:900;margin-bottom:1rem;letter-spacing:-0.5px}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-bottom:3rem}
+.about-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2rem}
+.about-card-title{font-size:1.4rem;font-weight:800;margin-bottom:0.75rem;display:flex;align-items:center;gap:10px;color:var(--accent)}
 
 /* Modal */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.82);backdrop-filter:blur(10px);z-index:200;display:none;place-items:center;padding:1rem}
@@ -160,6 +164,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:3.5r
   .hero-ctas{justify-content:center}
   .modal-card{grid-template-columns:1fr}
   .modal-img-wrap{display:none}
+  .about-grid{grid-template-columns:1fr}
   .foot-grid{grid-template-columns:1fr;gap:1.75rem}
   .nav-links,.search-box{display:none}
 }
@@ -168,32 +173,30 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:3.5r
 <body>
 
 <!-- Announcement Bar -->
-<div class="top-bar">⚡ 1 TLS ROUNDTRIP WEBPAGE: 0 EXTERNAL CSS/JS/FONTS — BROTLI COMPRESSED (<14,336 BYTES)</div>
+<div class="top-bar">⚡ MULTIPAGE 1-TLS TRIP: HOME, STORE & ABOUT US IN 1 SINGLE <14kB BROTLI PACKET</div>
 
-<!-- Header -->
+<!-- Header (Persistent Navbar) -->
 <header>
   <div class="container nav-wrap">
-    <a href="#" class="logo">
+    <a href="#home" onclick="navTo('home')" class="logo">
       <div class="logo-icon">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
       </div>
       <span>KINETIX</span>
     </a>
     <ul class="nav-links">
-      <li><a href="#" class="active">Store</a></li>
-      <li><a href="#catalog">Catalog</a></li>
-      <li><a href="#reviews">Reviews</a></li>
-      <li><a href="#tech">Tech Specs</a></li>
+      <li><a href="#home" id="nav-home" class="active" onclick="navTo('home')">Home</a></li>
+      <li><a href="#store" id="nav-store" onclick="navTo('store')">Main Store</a></li>
+      <li><a href="#about" id="nav-about" onclick="navTo('about')">About Us</a></li>
     </ul>
     
     <div class="search-box">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input type="text" placeholder="Search shoes..." onkeyup="searchShoes(this.value)">
+      <input type="text" placeholder="Search store..." onkeyup="searchShoes(this.value); navTo('store');">
     </div>
 
     <div style="display:flex;align-items:center;gap:1.25rem">
-      <!-- Theme Switcher Dots -->
-      <div class="theme-dots" title="Theme Color">
+      <div class="theme-dots" title="Theme Accent">
         <div class="dot" style="background:#6366f1" onclick="setTheme('indigo')"></div>
         <div class="dot" style="background:#06b6d4" onclick="setTheme('cyan')"></div>
         <div class="dot" style="background:#ec4899" onclick="setTheme('pink')"></div>
@@ -208,83 +211,146 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:3.5r
   </div>
 </header>
 
+<!-- MAIN CONTENT CONTAINER (DYNAMICALLY MANIPULATED VIEWS) -->
 <main class="container">
-  <!-- Hero Section -->
-  <section class="hero">
-    <div class="hero-text">
-      <div class="hero-badge">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        <span>NEW 2026 RACE EDITION</span>
+
+  <!-- PAGE 1: HOME -->
+  <section id="page-home" class="page-view active">
+    <!-- Hero Section -->
+    <div class="hero">
+      <div class="hero-text">
+        <div class="hero-badge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <span>2026 FLAGSHIP RELEASE</span>
+        </div>
+        <h1 class="hero-title">Defy Friction. Master Speed.</h1>
+        <p class="hero-desc">Dual-density nitrogen foam paired with a carbon propulsion matrix. Loaded instantly in 1 single TLS packet.</p>
+        <div class="hero-ctas">
+          <button class="btn-primary" onclick="navTo('store')">Enter Main Store →</button>
+          <button class="btn-secondary" onclick="navTo('about')">Our Story</button>
+        </div>
       </div>
-      <h1 class="hero-title">Defy Friction. Master Speed.</h1>
-      <p class="hero-desc">Dual-density nitrogen foam paired with a carbon propulsion matrix. Delivered in 1 single TLS packet.</p>
-      <div class="hero-ctas">
-        <button class="btn-primary" onclick="quickAddHero()">Buy Flagship Model ($189)</button>
-        <a href="#catalog" class="btn-secondary">Explore Catalog</a>
+      <div class="hero-visual">
+        <div class="float-tag tag-1">⚡ 198g Ultra-Light</div>
+        <div class="float-tag tag-2">🛡️ Carbon Plate</div>
+        <div class="float-tag tag-3">🚀 92% Energy Return</div>
+        <svg class="hero-shoe-svg" viewBox="0 0 500 300" fill="none">
+          <defs>
+            <linearGradient id="heroSole" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#06b6d4"/><stop offset="100%" stop-color="#6366f1"/>
+            </linearGradient>
+            <linearGradient id="heroUpper" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#1e1b4b"/><stop offset="50%" stop-color="#312e81"/><stop offset="100%" stop-color="#0f172a"/>
+            </linearGradient>
+            <linearGradient id="swoosh" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#ec4899"/><stop offset="100%" stop-color="#f59e0b"/>
+            </linearGradient>
+            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="8" result="blur"/><feComposite in="SourceGraphic" in2="blur" operator="over"/>
+            </filter>
+          </defs>
+          <ellipse cx="250" cy="275" rx="200" ry="12" fill="rgba(0,0,0,0.5)" filter="url(#glow)"/>
+          <path d="M40 230 C80 260 420 260 460 215 C440 200 400 215 360 215 C260 215 140 235 40 230 Z" fill="url(#heroSole)"/>
+          <path d="M50 220 C100 240 410 240 450 205 C430 185 390 195 350 195 C250 195 130 215 50 220 Z" fill="#ffffff" opacity="0.9"/>
+          <path d="M60 210 C90 205 130 180 180 150 C230 120 280 110 330 135 C370 155 420 175 440 195 C380 195 240 195 60 210 Z" fill="url(#heroUpper)"/>
+          <path d="M120 185 C140 140 180 100 220 95 C250 90 270 110 280 130 C230 125 170 145 120 185 Z" fill="#4338ca"/>
+          <path d="M140 175 C220 145 320 130 400 170 C330 160 230 170 140 175 Z" fill="url(#swoosh)" filter="url(#glow)"/>
+          <path d="M220 120 L245 135 M235 110 L260 125 M250 102 L275 118" stroke="#06b6d4" stroke-width="4" stroke-linecap="round"/>
+        </svg>
       </div>
     </div>
-    <div class="hero-visual">
-      <div class="float-tag tag-1">⚡ 198g Ultra-Light</div>
-      <div class="float-tag tag-2">🛡️ Carbon Plate</div>
-      <div class="float-tag tag-3">🚀 92% Energy Return</div>
-      <!-- Inline Hero Shoe SVG -->
-      <svg class="hero-shoe-svg" viewBox="0 0 500 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="heroSole" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#06b6d4"/>
-            <stop offset="100%" stop-color="#6366f1"/>
-          </linearGradient>
-          <linearGradient id="heroUpper" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#1e1b4b"/>
-            <stop offset="50%" stop-color="#312e81"/>
-            <stop offset="100%" stop-color="#0f172a"/>
-          </linearGradient>
-          <linearGradient id="swoosh" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stop-color="#ec4899"/>
-            <stop offset="100%" stop-color="#f59e0b"/>
-          </linearGradient>
-          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="8" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-          </filter>
-        </defs>
-        <ellipse cx="250" cy="275" rx="200" ry="12" fill="rgba(0,0,0,0.5)" filter="url(#glow)"/>
-        <path d="M40 230 C80 260 420 260 460 215 C440 200 400 215 360 215 C260 215 140 235 40 230 Z" fill="url(#heroSole)"/>
-        <path d="M50 220 C100 240 410 240 450 205 C430 185 390 195 350 195 C250 195 130 215 50 220 Z" fill="#ffffff" opacity="0.9"/>
-        <path d="M60 210 C90 205 130 180 180 150 C230 120 280 110 330 135 C370 155 420 175 440 195 C380 195 240 195 60 210 Z" fill="url(#heroUpper)"/>
-        <path d="M120 185 C140 140 180 100 220 95 C250 90 270 110 280 130 C230 125 170 145 120 185 Z" fill="#4338ca"/>
-        <path d="M140 175 C220 145 320 130 400 170 C330 160 230 170 140 175 Z" fill="url(#swoosh)" filter="url(#glow)"/>
-        <path d="M220 120 L245 135 M235 110 L260 125 M250 102 L275 118" stroke="#06b6d4" stroke-width="4" stroke-linecap="round"/>
-      </svg>
+
+    <!-- Features Bar -->
+    <div class="features-bar">
+      <div class="feat-item">
+        <div class="feat-icon">🚀</div>
+        <div><div class="feat-title">1 TLS Trip Load</div><div class="feat-desc">Sub-100ms instant rendering</div></div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">📦</div>
+        <div><div class="feat-title">Free Express Delivery</div><div class="feat-desc">On all orders above $150</div></div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">🛡️</div>
+        <div><div class="feat-title">30-Day Guarantee</div><div class="feat-desc">Road & track test trial</div></div>
+      </div>
+    </div>
+
+    <!-- Trending Teaser Section -->
+    <div style="margin-bottom:3rem">
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:1.5rem">
+        <div>
+          <span class="card-cat">Curated Selection</span>
+          <h2 class="section-title">Trending Right Now</h2>
+        </div>
+        <button class="btn-secondary" style="font-size:0.85rem;padding:6px 14px" onclick="navTo('store')">View All Models →</button>
+      </div>
+      <div class="product-grid">
+        <div class="card">
+          <div class="card-img-wrap">
+            <span class="card-badge">Carbon Matrix</span>
+            <svg class="card-shoe-svg" viewBox="0 0 400 240" fill="none">
+              <path d="M30 190 C70 215 330 215 370 180 C350 165 310 175 270 175 C170 175 90 195 30 190 Z" fill="#06b6d4"/>
+              <path d="M40 180 C80 160 180 90 260 100 C300 115 340 145 360 170 C300 170 180 170 40 180 Z" fill="#312e81"/>
+              <path d="M120 145 C180 120 260 110 320 145 Z" fill="#ec4899"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <div class="card-cat">Running</div>
+            <h3 class="card-name">Kinetix Aero-1 Pro</h3>
+            <div class="card-footer">
+              <div class="card-price">$189</div>
+              <button class="btn-add" onclick="addToCart('Kinetix Aero-1 Pro', 189)">+ Add</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-img-wrap">
+            <span class="card-badge" style="background:rgba(236,72,153,0.15);color:var(--accent-pink)">Top Speed</span>
+            <svg class="card-shoe-svg" viewBox="0 0 400 240" fill="none">
+              <path d="M30 190 C70 215 330 215 370 180 C350 165 310 175 270 175 C170 175 90 195 30 190 Z" fill="#ec4899"/>
+              <path d="M40 180 C80 160 180 90 260 100 C300 115 340 145 360 170 C300 170 180 170 40 180 Z" fill="#1e1b4b"/>
+              <path d="M120 145 C180 120 260 110 320 145 Z" fill="#f59e0b"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <div class="card-cat">Sprint</div>
+            <h3 class="card-name">Velox Carbon Sprint</h3>
+            <div class="card-footer">
+              <div class="card-price">$240</div>
+              <button class="btn-add" onclick="addToCart('Velox Carbon Sprint', 240)">+ Add</button>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-img-wrap">
+            <span class="card-badge" style="background:rgba(99,102,241,0.15);color:var(--primary)">High Top</span>
+            <svg class="card-shoe-svg" viewBox="0 0 400 240" fill="none">
+              <path d="M30 190 C70 215 330 215 370 180 C350 165 310 175 270 175 C170 175 90 195 30 190 Z" fill="#6366f1"/>
+              <path d="M40 180 C80 140 140 70 230 75 C290 85 340 140 360 170 C300 170 180 170 40 180 Z" fill="#311b92"/>
+              <path d="M110 135 C170 100 250 90 310 135 Z" fill="#06b6d4"/>
+            </svg>
+          </div>
+          <div class="card-body">
+            <div class="card-cat">Basketball</div>
+            <h3 class="card-name">Stride Phantom X</h3>
+            <div class="card-footer">
+              <div class="card-price">$210</div>
+              <button class="btn-add" onclick="addToCart('Stride Phantom X', 210)">+ Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
-  <!-- Features Bar -->
-  <section class="features-bar">
-    <div class="feat-item">
-      <div class="feat-icon">🚀</div>
-      <div><div class="feat-title">1 TLS Trip Load</div><div class="feat-desc">Instant <10ms rendering</div></div>
-    </div>
-    <div class="feat-item">
-      <div class="feat-icon">📦</div>
-      <div><div class="feat-title">Free Express Shipping</div><div class="feat-desc">On orders above $150</div></div>
-    </div>
-    <div class="feat-item">
-      <div class="feat-icon">🛡️</div>
-      <div><div class="feat-title">30-Day Risk-Free</div><div class="feat-desc">Road & track test guarantee</div></div>
-    </div>
-    <div class="feat-item">
-      <div class="feat-icon">🌿</div>
-      <div><div class="feat-title">Carbon Neutral</div><div class="feat-desc">100% recycled aeromesh</div></div>
-    </div>
-  </section>
 
-  <!-- Catalog Section -->
-  <section id="catalog">
+  <!-- PAGE 2: MAIN STORE -->
+  <section id="page-store" class="page-view">
     <div class="section-head">
       <div>
-        <h2 class="section-title">Performance Footwear</h2>
-        <p style="color:var(--muted)">Filtered in real-time without DOM rebuild delay.</p>
+        <h2 class="section-title">Main Store Catalog</h2>
+        <p style="color:var(--muted)">Explore our complete high-performance footwear lineup.</p>
       </div>
       <div class="filter-tabs">
         <button class="tab-btn active" onclick="filterCatalog('all', this)">All</button>
@@ -469,59 +535,45 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:3.5r
     </div>
   </section>
 
-  <!-- Reviews Section -->
-  <section id="reviews" style="margin-bottom:4rem">
-    <h2 class="section-title" style="margin-bottom:1.5rem">Verified Athlete Feedback</h2>
-    <div class="reviews-grid">
-      <div class="rev-card">
-        <div class="rev-user">
-          <div class="rev-avatar">MK</div>
-          <div><div class="rev-name">Marcus K.</div><div class="rev-verified">✓ Verified 42k Marathoner</div></div>
-        </div>
-        <div class="card-stars" style="margin-bottom:8px">★★★★★</div>
-        <div class="rev-text">"Shaved 4 minutes off my marathon PR. The responsiveness of the carbon plate with nitrogen foam is unmatched."</div>
+
+  <!-- PAGE 3: ABOUT US -->
+  <section id="page-about" class="page-view">
+    <div class="about-hero">
+      <span class="card-cat">Our Philosophy</span>
+      <h1 class="about-title">Born on the Track.<br>Engineered for the Web.</h1>
+      <p style="color:var(--muted);max-width:620px;margin:0 auto">At KINETIX, we believe footwear should eliminate physical friction, and web software should eliminate digital friction. That's why our entire brand experience loads in a single 14kB TLS trip.</p>
+    </div>
+
+    <div class="about-grid">
+      <div class="about-card">
+        <div class="about-card-title">🧪 Dual-Density Nitrogen Foam</div>
+        <p style="color:var(--muted);font-size:0.95rem">Our proprietary midsole compound infuses supercritical nitrogen gas into high-rebound polymers. Result: 35% lighter than standard EVA with 92% kinetic energy return per stride.</p>
       </div>
-      <div class="rev-card">
-        <div class="rev-user">
-          <div class="rev-avatar" style="background:linear-gradient(135deg,var(--accent-pink),var(--accent))">SL</div>
-          <div><div class="rev-name">Sarah L.</div><div class="rev-verified">✓ Verified Buyer</div></div>
-        </div>
-        <div class="card-stars" style="margin-bottom:8px">★★★★★</div>
-        <div class="rev-text">"The entire store loaded instantly (<14kB payload) with zero webfont delay. Best online buying experience."</div>
+      <div class="about-card">
+        <div class="about-card-title">⚡ The 1-TLS Roundtrip Promise</div>
+        <p style="color:var(--muted);font-size:0.95rem">Traditional online stores load 5MB of bloated scripts, trackers, and webfonts. KINETIX delivers full interactivity in <14,336 bytes Brotli — loading instantly on 2G mobile networks worldwide.</p>
       </div>
-      <div class="rev-card">
-        <div class="rev-user">
-          <div class="rev-avatar" style="background:linear-gradient(135deg,var(--success),var(--primary))">DR</div>
-          <div><div class="rev-name">David R.</div><div class="rev-verified">✓ Verified Trail Runner</div></div>
+    </div>
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2.5rem;margin-bottom:3rem">
+      <h2 style="font-size:1.8rem;font-weight:900;margin-bottom:1rem">Technical Benchmark Comparison</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;text-align:center">
+        <div style="background:var(--bg);border:1px solid var(--border);padding:1.25rem;border-radius:12px">
+          <div style="font-size:1.6rem;font-weight:900;color:var(--accent)">0ms</div>
+          <div style="font-size:0.8rem;color:var(--muted)">FOUT / Font Blocking</div>
         </div>
-        <div class="card-stars" style="margin-bottom:8px">★★★★★</div>
-        <div class="rev-text">"Unbelievable grip on mud and wet granite. The Vibram outsole compound holds up over 300+ miles!"</div>
+        <div style="background:var(--bg);border:1px solid var(--border);padding:1.25rem;border-radius:12px">
+          <div style="font-size:1.6rem;font-weight:900;color:var(--success)">8.77 kB</div>
+          <div style="font-size:0.8rem;color:var(--muted)">Brotli Compressed</div>
+        </div>
+        <div style="background:var(--bg);border:1px solid var(--border);padding:1.25rem;border-radius:12px">
+          <div style="font-size:1.6rem;font-weight:900;color:var(--primary)">1 Packet</div>
+          <div style="font-size:0.8rem;color:var(--muted)">TCP Initcwnd (10 MSS)</div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- Tech Specs Accordion / Info -->
-  <section id="tech" style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2.5rem;margin-bottom:4rem">
-    <div style="max-width:700px">
-      <span class="card-cat">Engineering Blueprint</span>
-      <h2 style="font-size:2rem;font-weight:900;margin-bottom:1rem">Why 1 TLS Roundtrip Matters</h2>
-      <p style="color:var(--muted);margin-bottom:1.5rem">By engineering this e-commerce application to fit within 14,336 bytes Brotli (the standard initial TCP congestion window of 10 MSS), the entire store loads in a single packet roundtrip over TLS.</p>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;text-align:center">
-        <div style="background:var(--bg);border:1px solid var(--border);padding:1rem;border-radius:12px">
-          <div style="font-size:1.5rem;font-weight:900;color:var(--accent)">0ms</div>
-          <div style="font-size:0.75rem;color:var(--muted)">FOUT / Font Blocking</div>
-        </div>
-        <div style="background:var(--bg);border:1px solid var(--border);padding:1rem;border-radius:12px">
-          <div style="font-size:1.5rem;font-weight:900;color:var(--success)">100%</div>
-          <div style="font-size:0.75rem;color:var(--muted)">Inline Vector SVG</div>
-        </div>
-        <div style="background:var(--bg);border:1px solid var(--border);padding:1rem;border-radius:12px">
-          <div style="font-size:1.5rem;font-weight:900;color:var(--primary)"><14kB</div>
-          <div style="font-size:0.75rem;color:var(--muted)">Brotli Compressed</div>
-        </div>
-      </div>
-    </div>
-  </section>
 </main>
 
 <!-- Quick View Modal -->
@@ -589,7 +641,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:3.5r
   <span>✓ Item added to bag!</span>
 </div>
 
-<!-- Footer -->
+<!-- Footer (Persistent) -->
 <footer>
   <div class="container">
     <div class="foot-grid">
@@ -598,19 +650,19 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:3.5r
           <div class="logo-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
           <span>KINETIX</span>
         </div>
-        <p>High-performance footwear concept engineered down to the byte. 100% self-contained in 1 TLS packet (<14,336 bytes Brotli).</p>
+        <p>Multipage high-performance footwear store engineered down to the byte. Home, Store & About Us in 1 TLS packet (<14,336 bytes Brotli).</p>
       </div>
       <div>
-        <div style="font-weight:800;color:var(--text);margin-bottom:1rem">Catalog</div>
-        <p><a href="#catalog">Running</a></p>
-        <p><a href="#catalog">Basketball</a></p>
-        <p><a href="#catalog">Lifestyle</a></p>
+        <div style="font-weight:800;color:var(--text);margin-bottom:1rem">Navigation</div>
+        <p><a href="#home" onclick="navTo('home')">Home</a></p>
+        <p><a href="#store" onclick="navTo('store')">Main Store</a></p>
+        <p><a href="#about" onclick="navTo('about')">About Us</a></p>
       </div>
       <div>
         <div style="font-weight:800;color:var(--text);margin-bottom:1rem">Innovation</div>
-        <p><a href="#tech">Carbon Plate</a></p>
-        <p><a href="#tech">Nitrogen Foam</a></p>
-        <p><a href="#tech">Sub-14kB TLS</a></p>
+        <p><a href="#about" onclick="navTo('about')">Carbon Plate</a></p>
+        <p><a href="#about" onclick="navTo('about')">Nitrogen Foam</a></p>
+        <p><a href="#about" onclick="navTo('about')">Sub-14kB TLS</a></p>
       </div>
       <div>
         <div style="font-weight:800;color:var(--text);margin-bottom:1rem">Guarantee</div>
@@ -620,7 +672,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:3.5r
       </div>
     </div>
     <div style="text-align:center;padding-top:1.5rem;border-top:1px solid var(--border);font-size:0.8rem">
-      © 2026 KINETIX Footwear Inc. Designed for maximum speed & sub-100ms load times.
+      © 2026 KINETIX Footwear Inc. Multipage 1-TLS trip prototype.
     </div>
   </div>
 </footer>
@@ -630,6 +682,33 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:3.5r
 let cart = [];
 let selectedSize = "9.5";
 let discountRate = 0;
+
+function navTo(pageId) {
+  document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  
+  const targetPage = document.getElementById('page-' + pageId);
+  const targetNav = document.getElementById('nav-' + pageId);
+  
+  if(targetPage) targetPage.classList.add('active');
+  if(targetNav) targetNav.classList.add('active');
+  
+  window.location.hash = pageId;
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+window.addEventListener('hashchange', function() {
+  const hash = window.location.hash.replace('#', '') || 'home';
+  if(['home', 'store', 'about'].includes(hash)) {
+    navTo(hash);
+  }
+});
+
+// Initialize on page load
+if(window.location.hash) {
+  const initHash = window.location.hash.replace('#', '');
+  if(['home', 'store', 'about'].includes(initHash)) navTo(initHash);
+}
 
 function setTheme(theme) {
   if(theme === 'indigo') document.documentElement.removeAttribute('data-theme');
@@ -684,11 +763,6 @@ function addToCart(name, price) {
   }
   updateCartUI();
   showToast('✓ Added ' + name + ' to bag');
-}
-
-function quickAddHero() {
-  addToCart('Kinetix Aero-1 Pro', 189);
-  toggleCart(true);
 }
 
 function applyPromo() {
