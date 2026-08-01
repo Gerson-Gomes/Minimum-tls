@@ -1,0 +1,36 @@
+<div class="page-view">
+  <div class="about-hero">
+    <span class="card-cat">Go + HTMX Architecture</span>
+    <h1 class="about-title">Born on the Track.<br>Engineered in Golang.</h1>
+    <p style="color:var(--muted);max-width:620px;margin:0 auto">KINETIX is powered by a custom Go HTTP server returning lightweight HTMX server-driven HTML partials compressed with native Brotli (`content-encoding: br`).</p>
+  </div>
+
+  <div class="about-grid">
+    <div class="about-card">
+      <div class="about-card-title">🧪 Supercritical Nitrogen Foam</div>
+      <p style="color:var(--muted);font-size:0.95rem">Midsole compound infuses supercritical nitrogen gas into high-rebound polymers. 35% lighter than standard EVA with 92% kinetic energy return per stride.</p>
+    </div>
+    <div class="about-card">
+      <div class="about-card-title">⚡ Go + HTMX Sub-2KB Partial Swapping</div>
+      <p style="color:var(--muted);font-size:0.95rem">Instead of shipping 5MB client JS single-page bundles, Go handles business logic and returns minimal sub-2KB HTML partials over HTMX, preserving 1-TLS trip speeds.</p>
+    </div>
+  </div>
+
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2.5rem;margin-bottom:3rem">
+    <h2 style="font-size:1.8rem;font-weight:900;margin-bottom:1rem">Go Server Performance Metrics</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;text-align:center">
+      <div style="background:var(--bg);border:1px solid var(--border);padding:1.25rem;border-radius:12px">
+        <div style="font-size:1.6rem;font-weight:900;color:var(--accent)">0ms</div>
+        <div style="font-size:0.8rem;color:var(--muted)">FOUT / Font Blocking</div>
+      </div>
+      <div style="background:var(--bg);border:1px solid var(--border);padding:1.25rem;border-radius:12px">
+        <div style="font-size:1.6rem;font-weight:900;color:var(--success)">brotli (br)</div>
+        <div style="font-size:0.8rem;color:var(--muted)">Native Go Middleware</div>
+      </div>
+      <div style="background:var(--bg);border:1px solid var(--border);padding:1.25rem;border-radius:12px">
+        <div style="font-size:1.6rem;font-weight:900;color:var(--primary)">< 1.5 KB</div>
+        <div style="font-size:0.8rem;color:var(--muted)">HTMX Partial Payload</div>
+      </div>
+    </div>
+  </div>
+</div>

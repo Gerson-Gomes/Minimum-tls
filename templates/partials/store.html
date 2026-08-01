@@ -1,0 +1,182 @@
+<div class="page-view">
+  <div class="section-head">
+    <div>
+      <h2 class="section-title">Main Store Catalog</h2>
+      <p style="color:var(--muted)">Explore our complete high-performance footwear lineup.</p>
+    </div>
+    <div class="filter-tabs">
+      <button class="tab-btn active" onclick="filterCatalog('all', this)">All</button>
+      <button class="tab-btn" onclick="filterCatalog('running', this)">Running</button>
+      <button class="tab-btn" onclick="filterCatalog('basketball', this)">Basketball</button>
+      <button class="tab-btn" onclick="filterCatalog('lifestyle', this)">Lifestyle</button>
+      <button class="tab-btn" onclick="filterCatalog('trail', this)">Trail</button>
+    </div>
+  </div>
+
+  <!-- Product Grid -->
+  <div class="product-grid" id="grid">
+    <!-- Card 1 -->
+    <div class="card" data-cat="running" data-name="kinetix aero-1 pro">
+      <div class="card-img-wrap">
+        <span class="card-badge">Carbon Matrix</span>
+        <svg class="card-shoe-svg" viewBox="0 0 400 240" fill="none" id="svg-shoe-1">
+          <path d="M30 190 C70 215 330 215 370 180 C350 165 310 175 270 175 C170 175 90 195 30 190 Z" fill="#06b6d4" class="sole-path"/>
+          <path d="M40 180 C80 160 180 90 260 100 C300 115 340 145 360 170 C300 170 180 170 40 180 Z" fill="#312e81" class="upper-path"/>
+          <path d="M120 145 C180 120 260 110 320 145 Z" fill="#ec4899" class="accent-path"/>
+        </svg>
+      </div>
+      <div class="card-body">
+        <div class="card-cat">Running / Marathon</div>
+        <h3 class="card-name">Kinetix Aero-1 Pro</h3>
+        <div class="card-stars">★★★★★ <span>(142)</span></div>
+        <div class="swatch-group">
+          <div class="swatch active" style="background:#06b6d4" onclick="changeColor('1','#06b6d4','#312e81',this)"></div>
+          <div class="swatch" style="background:#ec4899" onclick="changeColor('1','#ec4899','#831843',this)"></div>
+          <div class="swatch" style="background:#10b981" onclick="changeColor('1','#10b981','#064e3b',this)"></div>
+        </div>
+        <div class="card-footer">
+          <div class="card-price">$189</div>
+          <div class="card-actions">
+            <button class="btn-add" hx-post="/api/cart/add?shoe_id=1&name=Kinetix+Aero-1+Pro&price=189" hx-target="#cart-badge-count" onclick="showToast('✓ Added Kinetix Aero-1 Pro to bag')">+ Add</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="card" data-cat="running" data-name="velox carbon sprint">
+      <div class="card-img-wrap">
+        <span class="card-badge" style="background:rgba(236,72,153,0.15);color:var(--accent-pink)">Top Speed</span>
+        <svg class="card-shoe-svg" viewBox="0 0 400 240" fill="none" id="svg-shoe-2">
+          <path d="M30 190 C70 215 330 215 370 180 C350 165 310 175 270 175 C170 175 90 195 30 190 Z" fill="#ec4899" class="sole-path"/>
+          <path d="M40 180 C80 160 180 90 260 100 C300 115 340 145 360 170 C300 170 180 170 40 180 Z" fill="#1e1b4b" class="upper-path"/>
+          <path d="M120 145 C180 120 260 110 320 145 Z" fill="#f59e0b" class="accent-path"/>
+        </svg>
+      </div>
+      <div class="card-body">
+        <div class="card-cat">Running / Sprint</div>
+        <h3 class="card-name">Velox Carbon Sprint</h3>
+        <div class="card-stars">★★★★★ <span>(89)</span></div>
+        <div class="swatch-group">
+          <div class="swatch active" style="background:#ec4899" onclick="changeColor('2','#ec4899','#1e1b4b',this)"></div>
+          <div class="swatch" style="background:#f59e0b" onclick="changeColor('2','#f59e0b','#451a03',this)"></div>
+          <div class="swatch" style="background:#6366f1" onclick="changeColor('2','#6366f1','#1e1b4b',this)"></div>
+        </div>
+        <div class="card-footer">
+          <div class="card-price">$240</div>
+          <div class="card-actions">
+            <button class="btn-add" hx-post="/api/cart/add?shoe_id=2&name=Velox+Carbon+Sprint&price=240" hx-target="#cart-badge-count" onclick="showToast('✓ Added Velox Carbon Sprint to bag')">+ Add</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="card" data-cat="basketball" data-name="stride phantom x">
+      <div class="card-img-wrap">
+        <span class="card-badge" style="background:rgba(99,102,241,0.15);color:var(--primary)">High Top</span>
+        <svg class="card-shoe-svg" viewBox="0 0 400 240" fill="none" id="svg-shoe-3">
+          <path d="M30 190 C70 215 330 215 370 180 C350 165 310 175 270 175 C170 175 90 195 30 190 Z" fill="#6366f1" class="sole-path"/>
+          <path d="M40 180 C80 140 140 70 230 75 C290 85 340 140 360 170 C300 170 180 170 40 180 Z" fill="#311b92" class="upper-path"/>
+          <path d="M110 135 C170 100 250 90 310 135 Z" fill="#06b6d4" class="accent-path"/>
+        </svg>
+      </div>
+      <div class="card-body">
+        <div class="card-cat">Basketball / Lockdown</div>
+        <h3 class="card-name">Stride Phantom X</h3>
+        <div class="card-stars">★★★★★ <span>(96)</span></div>
+        <div class="swatch-group">
+          <div class="swatch active" style="background:#6366f1" onclick="changeColor('3','#6366f1','#311b92',this)"></div>
+          <div class="swatch" style="background:#06b6d4" onclick="changeColor('3','#06b6d4','#0e7490',this)"></div>
+        </div>
+        <div class="card-footer">
+          <div class="card-price">$210</div>
+          <div class="card-actions">
+            <button class="btn-add" hx-post="/api/cart/add?shoe_id=3&name=Stride+Phantom+X&price=210" hx-target="#cart-badge-count" onclick="showToast('✓ Added Stride Phantom X to bag')">+ Add</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card" data-cat="lifestyle" data-name="aura horizon low">
+      <div class="card-img-wrap">
+        <span class="card-badge" style="background:rgba(16,185,129,0.15);color:var(--success)">Eco Series</span>
+        <svg class="card-shoe-svg" viewBox="0 0 400 240" fill="none" id="svg-shoe-4">
+          <path d="M30 190 C70 215 330 215 370 180 C350 165 310 175 270 175 C170 175 90 195 30 190 Z" fill="#10b981" class="sole-path"/>
+          <path d="M40 180 C80 160 180 90 260 100 C300 115 340 145 360 170 C300 170 180 170 40 180 Z" fill="#0f172a" class="upper-path"/>
+          <path d="M120 145 C180 120 260 110 320 145 Z" fill="#06b6d4" class="accent-path"/>
+        </svg>
+      </div>
+      <div class="card-body">
+        <div class="card-cat">Lifestyle / Minimal</div>
+        <h3 class="card-name">Aura Horizon Low</h3>
+        <div class="card-stars">★★★★☆ <span>(210)</span></div>
+        <div class="swatch-group">
+          <div class="swatch active" style="background:#10b981" onclick="changeColor('4','#10b981','#0f172a',this)"></div>
+          <div class="swatch" style="background:#6366f1" onclick="changeColor('4','#6366f1','#1e1b4b',this)"></div>
+        </div>
+        <div class="card-footer">
+          <div class="card-price">$145</div>
+          <div class="card-actions">
+            <button class="btn-add" hx-post="/api/cart/add?shoe_id=4&name=Aura+Horizon+Low&price=145" hx-target="#cart-badge-count" onclick="showToast('✓ Added Aura Horizon Low to bag')">+ Add</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="card" data-cat="trail" data-name="kinetix terra apex">
+      <div class="card-img-wrap">
+        <span class="card-badge">Vibram Grip</span>
+        <svg class="card-shoe-svg" viewBox="0 0 400 240" fill="none" id="svg-shoe-5">
+          <path d="M30 190 C70 215 330 215 370 180 C350 165 310 175 270 175 C170 175 90 195 30 190 Z" fill="#f59e0b" class="sole-path"/>
+          <path d="M40 180 C80 160 180 90 260 100 C300 115 340 145 360 170 C300 170 180 170 40 180 Z" fill="#451a03" class="upper-path"/>
+          <path d="M120 145 C180 120 260 110 320 145 Z" fill="#10b981" class="accent-path"/>
+        </svg>
+      </div>
+      <div class="card-body">
+        <div class="card-cat">Trail / Outdoor</div>
+        <h3 class="card-name">Kinetix Terra Apex</h3>
+        <div class="card-stars">★★★★★ <span>(64)</span></div>
+        <div class="swatch-group">
+          <div class="swatch active" style="background:#f59e0b" onclick="changeColor('5','#f59e0b','#451a03',this)"></div>
+          <div class="swatch" style="background:#10b981" onclick="changeColor('5','#10b981','#064e3b',this)"></div>
+        </div>
+        <div class="card-footer">
+          <div class="card-price">$165</div>
+          <div class="card-actions">
+            <button class="btn-add" hx-post="/api/cart/add?shoe_id=5&name=Kinetix+Terra+Apex&price=165" hx-target="#cart-badge-count" onclick="showToast('✓ Added Kinetix Terra Apex to bag')">+ Add</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="card" data-cat="lifestyle" data-name="pulse street v2">
+      <div class="card-img-wrap">
+        <span class="card-badge" style="background:rgba(255,255,255,0.1);color:#fff">Streetwear</span>
+        <svg class="card-shoe-svg" viewBox="0 0 400 240" fill="none" id="svg-shoe-6">
+          <path d="M30 190 C70 215 330 215 370 180 C350 165 310 175 270 175 C170 175 90 195 30 190 Z" fill="#ffffff" class="sole-path"/>
+          <path d="M40 180 C80 160 180 90 260 100 C300 115 340 145 360 170 C300 170 180 170 40 180 Z" fill="#18181b" class="upper-path"/>
+          <path d="M120 145 C180 120 260 110 320 145 Z" fill="#06b6d4" class="accent-path"/>
+        </svg>
+      </div>
+      <div class="card-body">
+        <div class="card-cat">Lifestyle / Urban</div>
+        <h3 class="card-name">Pulse Street V2</h3>
+        <div class="card-stars">★★★★☆ <span>(178)</span></div>
+        <div class="swatch-group">
+          <div class="swatch active" style="background:#ffffff" onclick="changeColor('6','#ffffff','#18181b',this)"></div>
+          <div class="swatch" style="background:#ec4899" onclick="changeColor('6','#ec4899','#831843',this)"></div>
+        </div>
+        <div class="card-footer">
+          <div class="card-price">$129</div>
+          <div class="card-actions">
+            <button class="btn-add" hx-post="/api/cart/add?shoe_id=6&name=Pulse+Street+V2&price=129" hx-target="#cart-badge-count" onclick="showToast('✓ Added Pulse Street V2 to bag')">+ Add</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

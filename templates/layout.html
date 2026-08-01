@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KINETIX | Go + HTMX 1-TLS Trip Footwear</title>
+<meta name="description" content="Go server & HTMX powered footwear store. Sub-14kB Brotli 1-TLS trip delivery.">
+<script src="https://unpkg.com/htmx.org@1.9.10" integrity="sha384-D1Kt9ApDYmZfdsubrfLEGrftrOmUgyQTA0cewFMhWjEuo706550Cd445EidabbL1" crossorigin="anonymous"></script>
+<style>
+:root{--bg:#080b11;--surface:#101522;--surface-card:#151c2e;--border:rgba(255,255,255,0.08);--text:#f8fafc;--muted:#94a3b8;--primary:#6366f1;--primary-glow:rgba(99,102,241,0.35);--accent:#06b6d4;--accent-pink:#ec4899;--success:#10b981;--warning:#f59e0b;--radius:14px;--font:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+[data-theme="cyan"]{--primary:#06b6d4;--primary-glow:rgba(6,182,212,0.35);--accent:#38bdf8}
+[data-theme="pink"]{--primary:#ec4899;--primary-glow:rgba(236,72,153,0.35);--accent:#f472b6}
+[data-theme="emerald"]{--primary:#10b981;--primary-glow:rgba(16,185,129,0.35);--accent:#34d399}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input{font-family:inherit}
+.container{max-width:1200px;margin:0 auto;padding:0 1.25rem}
+
+/* Top Announcement */
+.top-bar{background:linear-gradient(90deg,var(--primary),var(--accent));color:#fff;font-size:0.78rem;font-weight:700;text-align:center;padding:6px;letter-spacing:0.5px}
+
+/* Header */
+header{position:sticky;top:0;z-index:100;background:rgba(8,11,17,0.85);backdrop-filter:blur(18px);border-bottom:1px solid var(--border)}
+.nav-wrap{display:flex;align-items:center;justify-content:space-between;height:70px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:1.4rem;letter-spacing:-0.5px}
+.logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:10px;display:grid;place-items:center;box-shadow:0 0 18px var(--primary-glow);transition:transform .2s}
+.logo:hover .logo-icon{transform:scale(1.05) rotate(-5deg)}
+.nav-links{display:flex;gap:1.5rem;list-style:none;align-items:center}
+.nav-links a{color:var(--muted);font-weight:700;font-size:0.95rem;transition:color .2s;padding:6px 0;position:relative}
+.nav-links a:hover,.nav-links a.active{color:var(--text)}
+.nav-links a.active::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:var(--primary);border-radius:2px}
+
+.search-box{display:flex;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 12px;gap:6px;width:180px;transition:border-color .2s,width .2s}
+.search-box:focus-within{border-color:var(--primary);width:220px}
+.search-box input{background:none;border:none;outline:none;color:var(--text);font-size:0.85rem;width:100%}
+
+.theme-dots{display:flex;gap:6px;align-items:center}
+.dot{width:14px;height:14px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .2s}
+.dot:hover{transform:scale(1.2)}
+
+.cart-btn{position:relative;background:var(--surface);border:1px solid var(--border);width:44px;height:44px;border-radius:12px;display:grid;place-items:center;transition:all .2s}
+.cart-btn:hover{border-color:var(--primary);color:var(--accent);transform:translateY(-1px)}
+.cart-badge{position:absolute;top:-4px;right:-4px;background:var(--primary);color:#fff;font-size:0.72rem;font-weight:800;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--bg);box-shadow:0 0 10px var(--primary-glow)}
+
+.user-badge{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);padding:4px 10px;border-radius:20px;font-size:0.85rem;font-weight:700}
+.user-avatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));display:grid;place-items:center;font-size:0.75rem;color:#fff}
+
+/* Page Views Container */
+.page-view{animation:fadeIn .25s ease-in-out}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+
+/* Hero */
+.hero{padding:3.5rem 0 2.5rem;display:grid;grid-template-columns:1fr 1.15fr;gap:3rem;align-items:center}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.3);border-radius:30px;color:var(--accent);font-size:0.82rem;font-weight:700;margin-bottom:1.25rem}
+.hero-title{font-size:3.6rem;font-weight:900;line-height:1.08;letter-spacing:-1px;margin-bottom:1rem;background:linear-gradient(135deg,#fff 35%,var(--muted));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-desc{color:var(--muted);font-size:1.1rem;margin-bottom:2rem;max-width:490px}
+.hero-ctas{display:flex;gap:1rem;align-items:center}
+.btn-primary{background:linear-gradient(135deg,var(--primary),#4338ca);color:#fff;padding:0.85rem 1.85rem;border-radius:12px;font-weight:700;font-size:1rem;box-shadow:0 8px 24px var(--primary-glow);transition:transform .2s,box-shadow .2s}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 32px var(--primary-glow)}
+.btn-secondary{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:0.85rem 1.75rem;border-radius:12px;font-weight:700;font-size:1rem;transition:all .2s}
+.btn-secondary:hover{border-color:var(--muted);background:rgba(255,255,255,0.04)}
+
+/* Hero Visual Canvas */
+.hero-visual{position:relative;background:radial-gradient(circle at center,rgba(99,102,241,0.18) 0%,transparent 70%);border-radius:28px;padding:2.5rem;display:grid;place-items:center;border:1px solid var(--border)}
+.hero-shoe-svg{width:100%;max-width:540px;filter:drop-shadow(0 25px 35px rgba(0,0,0,0.75));transition:transform .4s cubic-bezier(0.34,1.56,0.64,1)}
+.hero-visual:hover .hero-shoe-svg{transform:scale(1.05) rotate(-3deg)}
+.float-tag{position:absolute;background:rgba(16,21,34,0.92);backdrop-filter:blur(10px);border:1px solid var(--border);padding:8px 16px;border-radius:12px;font-size:0.82rem;font-weight:700;display:flex;align-items:center;gap:6px;box-shadow:0 10px 25px rgba(0,0,0,0.5)}
+.tag-1{top:8%;left:2%}
+.tag-2{bottom:10%;right:4%}
+.tag-3{top:50%;right:-12px;transform:translateY(-50%)}
+
+/* Features Bar */
+.features-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.5rem;padding:1.75rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin:2.5rem 0 3.5rem}
+.feat-item{display:flex;align-items:center;gap:1rem}
+.feat-icon{width:46px;height:46px;background:rgba(99,102,241,0.12);border-radius:12px;display:grid;place-items:center;color:var(--primary);font-size:1.2rem}
+.feat-title{font-weight:700;font-size:0.95rem}
+.feat-desc{color:var(--muted);font-size:0.8rem}
+
+/* Product Section */
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem}
+.section-title{font-size:2.2rem;font-weight:900;letter-spacing:-0.5px}
+.filter-tabs{display:flex;gap:0.4rem;background:var(--surface);padding:4px;border-radius:12px;border:1px solid var(--border)}
+.tab-btn{padding:8px 18px;border-radius:10px;font-size:0.85rem;font-weight:700;color:var(--muted);transition:all .2s}
+.tab-btn.active{background:var(--primary);color:#fff;box-shadow:0 4px 14px var(--primary-glow)}
+
+.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1.75rem;margin-bottom:4rem}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:18px;overflow:hidden;transition:transform .3s,border-color .3s,box-shadow .3s;display:flex;flex-direction:column}
+.card:hover{transform:translateY(-7px);border-color:rgba(99,102,241,0.4);box-shadow:0 20px 40px rgba(0,0,0,0.6)}
+.card-img-wrap{position:relative;background:radial-gradient(circle at center,rgba(255,255,255,0.03),rgba(0,0,0,0.3));padding:2rem 1.5rem;display:grid;place-items:center;height:220px}
+.card-badge{position:absolute;top:12px;left:12px;background:rgba(6,182,212,0.15);border:1px solid rgba(6,182,212,0.3);color:var(--accent);font-size:0.7rem;font-weight:800;padding:4px 10px;border-radius:8px;text-transform:uppercase;letter-spacing:0.5px}
+.card-shoe-svg{width:100%;height:145px;filter:drop-shadow(0 12px 20px rgba(0,0,0,0.6));transition:transform .3s cubic-bezier(0.34,1.56,0.64,1)}
+.card:hover .card-shoe-svg{transform:scale(1.1) rotate(-4deg)}
+.card-body{padding:1.35rem;display:flex;flex-direction:column;flex-grow:1}
+.card-cat{color:var(--accent);font-size:0.75rem;font-weight:800;text-transform:uppercase;margin-bottom:4px;letter-spacing:0.5px}
+.card-name{font-size:1.2rem;font-weight:800;margin-bottom:6px}
+.card-stars{display:flex;align-items:center;gap:4px;font-size:0.82rem;color:#f59e0b;margin-bottom:12px}
+.card-stars span{color:var(--muted);font-weight:600;margin-left:4px}
+.swatch-group{display:flex;gap:8px;margin-bottom:14px}
+.swatch{width:18px;height:18px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:transform .2s,border-color .2s}
+.swatch.active{border-color:#fff;transform:scale(1.25)}
+.card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:14px;border-top:1px solid var(--border)}
+.card-price{font-size:1.35rem;font-weight:900}
+.card-actions{display:flex;gap:8px}
+.btn-icon{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,0.04);border:1px solid var(--border);display:grid;place-items:center;transition:all .2s}
+.btn-icon:hover{background:var(--primary);border-color:var(--primary);color:#fff}
+.btn-add{background:var(--primary);color:#fff;border:none;padding:0 16px;border-radius:10px;font-weight:700;font-size:0.88rem;height:38px;display:flex;align-items:center;gap:6px;transition:all .2s}
+.btn-add:hover{background:#4338ca;box-shadow:0 4px 14px var(--primary-glow)}
+
+/* Auth Forms */
+.auth-box{max-width:440px;margin:3.5rem auto;background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:2.5rem;box-shadow:0 20px 40px rgba(0,0,0,0.5)}
+.auth-title{font-size:2rem;font-weight:900;margin-bottom:0.5rem;text-align:center}
+.auth-sub{color:var(--muted);font-size:0.9rem;text-align:center;margin-bottom:2rem}
+.form-group{margin-bottom:1.25rem}
+.form-label{display:block;font-size:0.82rem;font-weight:700;margin-bottom:6px;color:var(--muted)}
+.form-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-size:0.95rem;transition:border-color .2s}
+.form-input:focus{border-color:var(--primary);outline:none}
+
+/* About Page */
+.about-hero{text-align:center;padding:3.5rem 1rem;background:radial-gradient(circle at center,rgba(99,102,241,0.15),transparent 70%);border-radius:24px;border:1px solid var(--border);margin-bottom:3rem}
+.about-title{font-size:3rem;font-weight:900;margin-bottom:1rem;letter-spacing:-0.5px}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-bottom:3rem}
+.about-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2rem}
+.about-card-title{font-size:1.4rem;font-weight:800;margin-bottom:0.75rem;display:flex;align-items:center;gap:10px;color:var(--accent)}
+
+/* Drawer Cart */
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);z-index:300;opacity:0;pointer-events:none;transition:opacity .3s}
+.drawer-overlay.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:100%;max-width:440px;background:var(--surface);border-left:1px solid var(--border);z-index:301;transform:translateX(100%);transition:transform .35s cubic-bezier(0.16,1,0.3,1);display:flex;flex-direction:column;padding:1.75rem}
+.drawer-overlay.open .drawer{transform:translateX(0)}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;padding-bottom:1.25rem;border-bottom:1px solid var(--border)}
+.drawer-title{font-size:1.3rem;font-weight:900}
+.cart-items-list{flex-grow:1;overflow-y:auto;padding:1.25rem 0;display:flex;flex-direction:column;gap:1.25rem}
+.cart-item{display:flex;gap:14px;background:rgba(255,255,255,0.02);padding:12px;border-radius:12px;border:1px solid var(--border);align-items:center}
+.cart-item-img{width:68px;height:52px;background:rgba(0,0,0,0.3);border-radius:8px;display:grid;place-items:center;font-size:1.5rem}
+.cart-item-info{flex-grow:1}
+.cart-item-name{font-weight:800;font-size:0.92rem}
+.cart-item-sub{font-size:0.78rem;color:var(--muted)}
+.cart-item-price{font-weight:900;font-size:0.98rem;color:var(--accent)}
+.qty-ctrl{display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:3px 8px}
+.qty-btn{font-weight:800;padding:0 4px;font-size:0.9rem}
+.drawer-foot{padding-top:1.25rem;border-top:1px solid var(--border)}
+.promo-box{display:flex;gap:8px;margin-bottom:1rem}
+.promo-box input{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:0.85rem;flex-grow:1}
+.ship-progress{background:var(--bg);height:6px;border-radius:3px;overflow:hidden;margin-bottom:1.25rem}
+.ship-bar{height:100%;background:linear-gradient(90deg,var(--primary),var(--accent));width:0%;transition:width .3s}
+.price-row{display:flex;justify-content:space-between;margin-bottom:6px;font-size:0.9rem;color:var(--muted)}
+.price-row.total{color:var(--text);font-size:1.25rem;font-weight:900;margin-top:10px}
+
+/* Toast */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--surface-card);border:1px solid var(--primary);color:var(--text);padding:14px 28px;border-radius:35px;font-weight:700;font-size:0.92rem;box-shadow:0 12px 35px rgba(0,0,0,0.6);display:flex;align-items:center;gap:10px;z-index:400;opacity:0;transition:all .35s cubic-bezier(0.16,1,0.3,1)}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.82);backdrop-filter:blur(10px);z-index:200;display:none;place-items:center;padding:1rem}
+.modal-overlay.open{display:grid}
+.modal-card{background:var(--surface);border:1px solid var(--border);border-radius:24px;max-width:780px;width:100%;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;position:relative;box-shadow:0 30px 60px -12px rgba(0,0,0,0.8)}
+.modal-close{position:absolute;top:18px;right:18px;z-index:10;width:38px;height:38px;border-radius:50%;background:rgba(0,0,0,0.5);border:1px solid var(--border);display:grid;place-items:center;transition:background .2s}
+.modal-close:hover{background:var(--primary)}
+.modal-img-wrap{background:linear-gradient(135deg,rgba(99,102,241,0.12),rgba(0,0,0,0.5));padding:2.5rem;display:grid;place-items:center}
+.modal-content{padding:2rem;display:flex;flex-direction:column}
+.size-selector{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:1rem 0 1.5rem}
+.size-btn{border:1px solid var(--border);padding:10px 0;border-radius:10px;font-weight:700;font-size:0.85rem;text-align:center;transition:all .2s}
+.size-btn.active,.size-btn:hover{border-color:var(--primary);background:rgba(99,102,241,0.18);color:var(--accent)}
+
+/* Footer */
+footer{background:var(--surface);border-top:1px solid var(--border);padding:3.5rem 0 2rem;margin-top:4rem;color:var(--muted);font-size:0.9rem}
+.foot-grid{display:grid;grid-template-columns:2.2fr 1fr 1fr 1fr;gap:2rem;margin-bottom:2.5rem}
+
+@media(max-width:840px){
+  .hero{grid-template-columns:1fr;text-align:center}
+  .hero-title{font-size:2.5rem}
+  .hero-desc{margin:0 auto 1.5rem}
+  .hero-ctas{justify-content:center}
+  .modal-card{grid-template-columns:1fr}
+  .modal-img-wrap{display:none}
+  .about-grid{grid-template-columns:1fr}
+  .foot-grid{grid-template-columns:1fr;gap:1.75rem}
+  .nav-links,.search-box{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- Announcement Bar -->
+<div class="top-bar">⚡ GO SERVER + HTMX POWERED STORE: BROTLI COMPRESSED (<14,336 BYTES)</div>
+
+<!-- Header (Persistent Navbar) -->
+<header id="header-bar">
+  <div class="container nav-wrap">
+    <a href="/" hx-get="/view/home" hx-target="#main-content" hx-push-url="/" class="logo">
+      <div class="logo-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      </div>
+      <span>KINETIX</span>
+    </a>
+    
+    <ul class="nav-links">
+      <li><a href="/" hx-get="/view/home" hx-target="#main-content" hx-push-url="/" class="{{if eq .ActivePage "home"}}active{{end}}">Home</a></li>
+      <li><a href="/store" hx-get="/view/store" hx-target="#main-content" hx-push-url="/store" class="{{if eq .ActivePage "store"}}active{{end}}">Main Store</a></li>
+      <li><a href="/about" hx-get="/view/about" hx-target="#main-content" hx-push-url="/about" class="{{if eq .ActivePage "about"}}active{{end}}">About Us</a></li>
+    </ul>
+    
+    <div class="search-box">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="Search store..." onkeyup="searchShoes(this.value)">
+    </div>
+
+    <div style="display:flex;align-items:center;gap:1.25rem">
+      <div class="theme-dots" title="Theme Accent">
+        <div class="dot" style="background:#6366f1" onclick="setTheme('indigo')"></div>
+        <div class="dot" style="background:#06b6d4" onclick="setTheme('cyan')"></div>
+        <div class="dot" style="background:#ec4899" onclick="setTheme('pink')"></div>
+        <div class="dot" style="background:#10b981" onclick="setTheme('emerald')"></div>
+      </div>
+      
+      {{if .User}}
+      <div class="user-badge" title="Logged in as {{.User.Name}}">
+        <div class="user-avatar">{{.User.Avatar}}</div>
+        <span>{{.User.Name}}</span>
+        <button hx-post="/api/auth/logout" hx-target="body" style="font-size:0.75rem;color:var(--accent);margin-left:4px">Exit</button>
+      </div>
+      {{else}}
+      <a href="/login" hx-get="/view/login" hx-target="#main-content" hx-push-url="/login" class="btn-secondary" style="padding:6px 14px;font-size:0.85rem">Login</a>
+      {{end}}
+
+      <button class="cart-btn" hx-get="/api/cart/drawer" hx-target="#drawer-container" onclick="toggleCart(true)" aria-label="Cart">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        <span class="cart-badge" id="cart-badge-count">{{.Cart.TotalCount}}</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- MAIN CONTENT CONTAINER (DYNAMICALLY MANIPULATED BY HTMX) -->
+<main class="container" id="main-content">
+  {{.Content}}
+</main>
+
+<!-- Slide Cart Drawer Container -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="toggleCart(false)">
+  <div class="drawer" id="drawer-container" onclick="event.stopPropagation()">
+    <!-- Rendered dynamically by HTMX -->
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div class="toast" id="toast">
+  <span id="toast-text">✓ Operation successful</span>
+</div>
+
+<!-- Footer (Persistent) -->
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div>
+        <div class="logo" style="margin-bottom:1rem">
+          <div class="logo-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+          <span>KINETIX</span>
+        </div>
+        <p>Go HTTP Server & HTMX server-driven footwear platform. 100% self-contained in 1 TLS packet (<14,336 bytes Brotli).</p>
+      </div>
+      <div>
+        <div style="font-weight:800;color:var(--text);margin-bottom:1rem">Navigation</div>
+        <p><a href="/" hx-get="/view/home" hx-target="#main-content" hx-push-url="/">Home</a></p>
+        <p><a href="/store" hx-get="/view/store" hx-target="#main-content" hx-push-url="/store">Main Store</a></p>
+        <p><a href="/about" hx-get="/view/about" hx-target="#main-content" hx-push-url="/about">About Us</a></p>
+      </div>
+      <div>
+        <div style="font-weight:800;color:var(--text);margin-bottom:1rem">Account</div>
+        <p><a href="/login" hx-get="/view/login" hx-target="#main-content" hx-push-url="/login">Login</a></p>
+        <p><a href="/signup" hx-get="/view/signup" hx-target="#main-content" hx-push-url="/signup">Sign Up</a></p>
+      </div>
+      <div>
+        <div style="font-weight:800;color:var(--text);margin-bottom:1rem">Guarantee</div>
+        <p>30-Day Trial</p>
+        <p>Free Returns</p>
+        <p>Global Shipping</p>
+      </div>
+    </div>
+    <div style="text-align:center;padding-top:1.5rem;border-top:1px solid var(--border);font-size:0.8rem">
+      © 2026 KINETIX Footwear Inc. Go + HTMX 1-TLS trip prototype.
+    </div>
+  </div>
+</footer>
+
+<script>
+function setTheme(theme) {
+  if(theme === 'indigo') document.documentElement.removeAttribute('data-theme');
+  else document.documentElement.setAttribute('data-theme', theme);
+  showToast('🎨 Theme accent set to ' + theme.toUpperCase());
+}
+
+function toggleCart(open) {
+  const overlay = document.getElementById('drawer-overlay');
+  if(open) overlay.classList.add('open');
+  else overlay.classList.remove('open');
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toast-text').textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2600);
+}
+
+function changeColor(id, soleColor, upperColor, el) {
+  const parent = el.parentElement;
+  parent.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  const svg = document.getElementById('svg-shoe-' + id);
+  if(svg) {
+    const sole = svg.querySelector('.sole-path');
+    const upper = svg.querySelector('.upper-path');
+    if(sole) sole.setAttribute('fill', soleColor);
+    if(upper) upper.setAttribute('fill', upperColor);
+  }
+}
+
+function filterCatalog(cat, el) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('#grid .card').forEach(card => {
+    if(cat === 'all' || card.getAttribute('data-cat') === cat) {
+      card.style.display = 'flex';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+
+function searchShoes(query) {
+  const q = query.toLowerCase().trim();
+  document.querySelectorAll('#grid .card').forEach(card => {
+    const name = card.getAttribute('data-name') || '';
+    const cat = card.getAttribute('data-cat') || '';
+    if(name.includes(q) || cat.includes(q)) {
+      card.style.display = 'flex';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+
+document.body.addEventListener('htmx:afterSwap', function(evt) {
+  if (evt.detail.target.id === 'drawer-container') {
+    toggleCart(true);
+  }
+});
+</script>
+</body>
+</html>

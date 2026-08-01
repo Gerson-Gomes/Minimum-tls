@@ -1,0 +1,26 @@
+<div class="page-view">
+  <div class="auth-box">
+    <h2 class="auth-title">Join KINETIX</h2>
+    <p class="auth-sub">Create your account for exclusive race drops & free shipping</p>
+    
+    <form hx-post="/api/auth/signup" hx-target="body">
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input type="text" name="name" class="form-input" placeholder="Marcus Vance" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" name="email" class="form-input" placeholder="marcus@kinetix.com" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" class="form-input" placeholder="Create password" required>
+      </div>
+      <button type="submit" class="btn-primary" style="width:100%;margin-top:1rem">Create Account 🚀</button>
+    </form>
+    
+    <div style="text-align:center;margin-top:1.5rem;font-size:0.85rem;color:var(--muted)">
+      Already registered? <a href="/login" hx-get="/view/login" hx-target="#main-content" hx-push-url="/login" style="color:var(--accent);font-weight:700">Sign In</a>
+    </div>
+  </div>
+</div>

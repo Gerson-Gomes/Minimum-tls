@@ -1,0 +1,22 @@
+<div class="page-view">
+  <div class="auth-box">
+    <h2 class="auth-title">Welcome Back</h2>
+    <p class="auth-sub">Sign in to your KINETIX athlete account</p>
+    
+    <form hx-post="/api/auth/login" hx-target="body">
+      <div class="form-group">
+        <label class="form-label">Email Address</label>
+        <input type="email" name="email" class="form-input" placeholder="runner@kinetix.com" required value="runner@kinetix.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" class="form-input" placeholder="••••••••" required value="speed2026">
+      </div>
+      <button type="submit" class="btn-primary" style="width:100%;margin-top:1rem">Sign In ⚡</button>
+    </form>
+    
+    <div style="text-align:center;margin-top:1.5rem;font-size:0.85rem;color:var(--muted)">
+      Don't have an account? <a href="/signup" hx-get="/view/signup" hx-target="#main-content" hx-push-url="/signup" style="color:var(--accent);font-weight:700">Sign Up</a>
+    </div>
+  </div>
+</div>

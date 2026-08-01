@@ -1,0 +1,44 @@
+<div class="drawer-head">
+  <div class="drawer-title">Your Shopping Bag ({{.Cart.TotalCount}})</div>
+  <button class="modal-close" onclick="toggleCart(false)">✕</button>
+</div>
+
+<div class="cart-items-list">
+  {{if eq (len .Cart.Items) 0}}
+    <div style="text-align:center;color:var(--muted);margin-top:4rem">Your bag is currently empty.</div>
+  {{else}}
+    {{range $idx, $item := .Cart.Items}}
+    <div class="cart-item">
+      <div class="cart-item-img">👟</div>
+      <div class="cart-item-info">
+        <div class="cart-item-name">{{$item.Name}}</div>
+        <div class="cart-item-sub">US {{$item.Size}}</div>
+        <div class="cart-item-price">${{printf "%.2f" $item.Price}}</div>
+      </div>
+      <div class="qty-ctrl">
+        <button class="qty-btn" hx-post="/api/cart/qty?idx={{$idx}}&delta=-1" hx-target="#drawer-container">-</button>
+        <span>{{$item.Qty}}</span>
+        <button class="qty-btn" hx-post="/api/cart/qty?idx={{$idx}}&delta=1" hx-target="#drawer-container">+</button>
+      </div>
+    </div>
+    {{end}}
+  {{end}}
+</div>
+
+<div class="drawer-foot">
+  <form hx-post="/api/cart/promo" hx-target="#drawer-container" class="promo-box">
+    <input type="text" name="promo" placeholder="Promo code (Try 'TLS14')" value="{{.Cart.PromoCode}}">
+    <button type="submit" class="btn-secondary" style="padding:0 14px;font-size:0.85rem">Apply</button>
+  </form>
+
+  <div class="price-row"><span>Subtotal</span><span>${{printf "%.2f" .Cart.Subtotal}}</span></div>
+  {{if gt .Cart.DiscountRate 0.0}}
+  <div class="price-row" style="color:var(--success)"><span>Discount (10%)</span><span>-${{printf "%.2f" .Cart.Discount}}</span></div>
+  {{end}}
+  <div class="price-row"><span>Express Shipping</span><span>Free</span></div>
+  <div class="price-row total"><span>Total</span><span>${{printf "%.2f" .Cart.Total}}</span></div>
+
+  {{if gt (len .Cart.Items) 0}}
+  <button class="btn-primary" style="width:100%;margin-top:1rem" hx-post="/api/cart/checkout" hx-target="#drawer-container">Proceed to Checkout ⚡</button>
+  {{end}}
+</div>

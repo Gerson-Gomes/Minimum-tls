@@ -3,48 +3,57 @@ import os
 import sys
 import subprocess
 import gzip
+import urllib.request
+import time
 
-TARGET_FILE = "index.html"
 LIMIT_BYTES = 14336 # 14 KB (14 * 1024)
 
-def check_file():
-    if not os.path.exists(TARGET_FILE):
-        print(f"Error: {TARGET_FILE} does not exist.")
-        sys.exit(1)
-        
-    with open(TARGET_FILE, "rb") as f:
-        content = f.read()
-        
-    raw_size = len(content)
-    gz_content = gzip.compress(content, compresslevel=9)
-    gz_size = len(gz_content)
+def check_go_server():
+    print("=" * 60)
+    print(" ⚡ PHASE 2: GO SERVER + HTMX 14kB TLS TRIP REPORT")
+    print("=" * 60)
     
-    # Use system brotli binary
-    res = subprocess.run(["brotli", "-q", "11", "-c", TARGET_FILE], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    if res.returncode != 0:
-        print(f"Error running brotli binary: {res.stderr.decode('utf-8')}")
-        sys.exit(1)
+    proc = subprocess.Popen(["./kinetix-server"])
+    time.sleep(1)
+    
+    try:
+        # 1. Full Layout Home Page
+        req = urllib.request.Request("http://localhost:8080/", headers={"Accept-Encoding": "br"})
+        resp = urllib.request.urlopen(req)
+        br_data = resp.read()
+        br_size = len(br_data)
         
-    br_content = res.stdout
-    br_size = len(br_content)
-    
-    diff = LIMIT_BYTES - br_size
-    percent_used = (br_size / LIMIT_BYTES) * 100
-    
-    print("=" * 55)
-    print(" ⚡ 14kB TLS TRIP SIZE CHECK REPORT")
-    print("=" * 55)
-    print(f" Raw HTML Size:       {raw_size:,} bytes ({raw_size/1024:.2f} KB)")
-    print(f" Gzip (Level 9):      {gz_size:,} bytes ({gz_size/1024:.2f} KB)")
-    print(f" Brotli (Quality 11): {br_size:,} bytes ({br_size/1024:.2f} KB)")
-    print(f" Target Budget Limit: {LIMIT_BYTES:,} bytes ({LIMIT_BYTES/1024:.2f} KB)")
-    print("-" * 55)
-    
-    if br_size <= LIMIT_BYTES:
-        print(f" ✅ PASS: {br_size:,} / {LIMIT_BYTES:,} bytes ({percent_used:.1f}% used). Budget remaining: {diff:,} bytes!")
-    else:
-        print(f" ❌ EXCEEDED BUDGET: Over by {-diff:,} bytes! ({percent_used:.1f}% of limit)")
-        sys.exit(1)
+        req_gz = urllib.request.Request("http://localhost:8080/", headers={"Accept-Encoding": "gzip"})
+        resp_gz = urllib.request.urlopen(req_gz)
+        gz_data = resp_gz.read()
+        gz_size = len(gz_data)
         
+        # 2. HTMX Partial View
+        req_htmx = urllib.request.Request("http://localhost:8080/view/store", headers={
+            "Accept-Encoding": "br",
+            "HX-Request": "true",
+            "HX-Target": "main-content"
+        })
+        resp_htmx = urllib.request.urlopen(req_htmx)
+        htmx_br_size = len(resp_htmx.read())
+        
+        diff = LIMIT_BYTES - br_size
+        pct = (br_size / LIMIT_BYTES) * 100
+        
+        print(f" Full Page Brotli (br):  {br_size:,} bytes ({br_size/1024:.2f} KB)")
+        print(f" Full Page Gzip (gzip):  {gz_size:,} bytes ({gz_size/1024:.2f} KB)")
+        print(f" HTMX Store Partial (br): {htmx_br_size:,} bytes ({htmx_br_size/1024:.2f} KB)")
+        print(f" Target 1-TLS Limit:     {LIMIT_BYTES:,} bytes ({LIMIT_BYTES/1024:.2f} KB)")
+        print("-" * 60)
+        
+        if br_size <= LIMIT_BYTES:
+            print(f" ✅ PASS: {br_size:,} / {LIMIT_BYTES:,} bytes ({pct:.1f}% used). Budget remaining: {diff:,} bytes!")
+        else:
+            print(f" ❌ EXCEEDED BUDGET: Over limit by {-diff:,} bytes!")
+            sys.exit(1)
+            
+    finally:
+        proc.terminate()
+
 if __name__ == "__main__":
-    check_file()
+    check_go_server()
