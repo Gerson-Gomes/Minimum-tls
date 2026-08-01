@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KINETIX | 1-TLS Trip Performance Footwear</title>
+<meta name="description" content="Ultra-lightweight performance footwear store loaded in a single 14kB TLS trip. Zero webfonts, minified inline SVGs, Brotli compressed.">
+<style>
+:root{--bg:#080b11;--surface:#101522;--surface-card:#151c2e;--border:rgba(255,255,255,0.08);--text:#f8fafc;--muted:#94a3b8;--primary:#6366f1;--primary-glow:rgba(99,102,241,0.35);--accent:#06b6d4;--accent-pink:#ec4899;--success:#10b981;--warning:#f59e0b;--radius:14px;--font:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+[data-theme="cyan"]{--primary:#06b6d4;--primary-glow:rgba(6,182,212,0.35);--accent:#38bdf8}
+[data-theme="pink"]{--primary:#ec4899;--primary-glow:rgba(236,72,153,0.35);--accent:#f472b6}
+[data-theme="emerald"]{--primary:#10b981;--primary-glow:rgba(16,185,129,0.35);--accent:#34d399}
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input{font-family:inherit}
+.container{max-width:1200px;margin:0 auto;padding:0 1.25rem}
+
+/* Top Announcement */
+.top-bar{background:linear-gradient(90deg,var(--primary),var(--accent));color:#fff;font-size:0.78rem;font-weight:700;text-align:center;padding:6px;letter-spacing:0.5px}
+
+/* Header */
+header{position:sticky;top:0;z-index:100;background:rgba(8,11,17,0.85);backdrop-filter:blur(18px);border-bottom:1px solid var(--border)}
+.nav-wrap{display:flex;align-items:center;justify-content:space-between;height:70px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:1.4rem;letter-spacing:-0.5px}
+.logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--primary),var(--accent));border-radius:10px;display:grid;place-items:center;box-shadow:0 0 18px var(--primary-glow);transition:transform .2s}
+.logo:hover .logo-icon{transform:scale(1.05) rotate(-5deg)}
+.nav-links{display:flex;gap:1.75rem;list-style:none}
+.nav-links a{color:var(--muted);font-weight:600;font-size:0.95rem;transition:color .2s}
+.nav-links a:hover,.nav-links a.active{color:var(--text)}
+
+.search-box{display:flex;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:4px 12px;gap:6px;width:200px;transition:border-color .2s,width .2s}
+.search-box:focus-within{border-color:var(--primary);width:240px}
+.search-box input{background:none;border:none;outline:none;color:var(--text);font-size:0.85rem;width:100%}
+
+.theme-dots{display:flex;gap:6px;align-items:center}
+.dot{width:14px;height:14px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:transform .2s}
+.dot:hover{transform:scale(1.2)}
+
+.cart-btn{position:relative;background:var(--surface);border:1px solid var(--border);width:44px;height:44px;border-radius:12px;display:grid;place-items:center;transition:all .2s}
+.cart-btn:hover{border-color:var(--primary);color:var(--accent);transform:translateY(-1px)}
+.cart-badge{position:absolute;top:-4px;right:-4px;background:var(--primary);color:#fff;font-size:0.72rem;font-weight:800;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--bg);box-shadow:0 0 10px var(--primary-glow)}
+
+/* Hero */
+.hero{padding:3.5rem 0 2.5rem;display:grid;grid-template-columns:1fr 1.15fr;gap:3rem;align-items:center}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;background:rgba(99,102,241,0.12);border:1px solid rgba(99,102,241,0.3);border-radius:30px;color:var(--accent);font-size:0.82rem;font-weight:700;margin-bottom:1.25rem}
+.hero-title{font-size:3.6rem;font-weight:900;line-height:1.08;letter-spacing:-1px;margin-bottom:1rem;background:linear-gradient(135deg,#fff 35%,var(--muted));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero-desc{color:var(--muted);font-size:1.1rem;margin-bottom:2rem;max-width:490px}
+.hero-ctas{display:flex;gap:1rem;align-items:center}
+.btn-primary{background:linear-gradient(135deg,var(--primary),#4338ca);color:#fff;padding:0.85rem 1.85rem;border-radius:12px;font-weight:700;font-size:1rem;box-shadow:0 8px 24px var(--primary-glow);transition:transform .2s,box-shadow .2s}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 32px var(--primary-glow)}
+.btn-secondary{background:var(--surface);border:1px solid var(--border);color:var(--text);padding:0.85rem 1.75rem;border-radius:12px;font-weight:700;font-size:1rem;transition:all .2s}
+.btn-secondary:hover{border-color:var(--muted);background:rgba(255,255,255,0.04)}
+
+/* Hero Visual Canvas */
+.hero-visual{position:relative;background:radial-gradient(circle at center,rgba(99,102,241,0.18) 0%,transparent 70%);border-radius:28px;padding:2.5rem;display:grid;place-items:center;border:1px solid var(--border)}
+.hero-shoe-svg{width:100%;max-width:540px;filter:drop-shadow(0 25px 35px rgba(0,0,0,0.75));transition:transform .4s cubic-bezier(0.34,1.56,0.64,1)}
+.hero-visual:hover .hero-shoe-svg{transform:scale(1.05) rotate(-3deg)}
+.float-tag{position:absolute;background:rgba(16,21,34,0.92);backdrop-filter:blur(10px);border:1px solid var(--border);padding:8px 16px;border-radius:12px;font-size:0.82rem;font-weight:700;display:flex;align-items:center;gap:6px;box-shadow:0 10px 25px rgba(0,0,0,0.5)}
+.tag-1{top:8%;left:2%}
+.tag-2{bottom:10%;right:4%}
+.tag-3{top:50%;right:-12px;transform:translateY(-50%)}
+
+/* Features Bar */
+.features-bar{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1.5rem;padding:1.75rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:3.5rem}
+.feat-item{display:flex;align-items:center;gap:1rem}
+.feat-icon{width:46px;height:46px;background:rgba(99,102,241,0.12);border-radius:12px;display:grid;place-items:center;color:var(--primary);font-size:1.2rem}
+.feat-title{font-weight:700;font-size:0.95rem}
+.feat-desc{color:var(--muted);font-size:0.8rem}
+
+/* Product Section */
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:2rem;flex-wrap:wrap;gap:1rem}
+.section-title{font-size:2.2rem;font-weight:900;letter-spacing:-0.5px}
+.filter-tabs{display:flex;gap:0.4rem;background:var(--surface);padding:4px;border-radius:12px;border:1px solid var(--border)}
+.tab-btn{padding:8px 18px;border-radius:10px;font-size:0.85rem;font-weight:700;color:var(--muted);transition:all .2s}
+.tab-btn.active{background:var(--primary);color:#fff;box-shadow:0 4px 14px var(--primary-glow)}
+
+.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:1.75rem;margin-bottom:4rem}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:18px;overflow:hidden;transition:transform .3s,border-color .3s,box-shadow .3s;display:flex;flex-direction:column}
+.card:hover{transform:translateY(-7px);border-color:rgba(99,102,241,0.4);box-shadow:0 20px 40px rgba(0,0,0,0.6)}
+.card-img-wrap{position:relative;background:radial-gradient(circle at center,rgba(255,255,255,0.03),rgba(0,0,0,0.3));padding:2rem 1.5rem;display:grid;place-items:center;height:220px}
+.card-badge{position:absolute;top:12px;left:12px;background:rgba(6,182,212,0.15);border:1px solid rgba(6,182,212,0.3);color:var(--accent);font-size:0.7rem;font-weight:800;padding:4px 10px;border-radius:8px;text-transform:uppercase;letter-spacing:0.5px}
+.card-shoe-svg{width:100%;height:145px;filter:drop-shadow(0 12px 20px rgba(0,0,0,0.6));transition:transform .3s cubic-bezier(0.34,1.56,0.64,1)}
+.card:hover .card-shoe-svg{transform:scale(1.1) rotate(-4deg)}
+.card-body{padding:1.35rem;display:flex;flex-direction:column;flex-grow:1}
+.card-cat{color:var(--accent);font-size:0.75rem;font-weight:800;text-transform:uppercase;margin-bottom:4px;letter-spacing:0.5px}
+.card-name{font-size:1.2rem;font-weight:800;margin-bottom:6px}
+.card-stars{display:flex;align-items:center;gap:4px;font-size:0.82rem;color:#f59e0b;margin-bottom:12px}
+.card-stars span{color:var(--muted);font-weight:600;margin-left:4px}
+.swatch-group{display:flex;gap:8px;margin-bottom:14px}
+.swatch{width:18px;height:18px;border-radius:50%;border:2px solid transparent;cursor:pointer;transition:transform .2s,border-color .2s}
+.swatch.active{border-color:#fff;transform:scale(1.25)}
+.card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:14px;border-top:1px solid var(--border)}
+.card-price{font-size:1.35rem;font-weight:900}
+.card-actions{display:flex;gap:8px}
+.btn-icon{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,0.04);border:1px solid var(--border);display:grid;place-items:center;transition:all .2s}
+.btn-icon:hover{background:var(--primary);border-color:var(--primary);color:#fff}
+.btn-add{background:var(--primary);color:#fff;border:none;padding:0 16px;border-radius:10px;font-weight:700;font-size:0.88rem;height:38px;display:flex;align-items:center;gap:6px;transition:all .2s}
+.btn-add:hover{background:#4338ca;box-shadow:0 4px 14px var(--primary-glow)}
+
+/* Reviews */
+.reviews-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-bottom:4rem}
+.rev-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.5rem}
+.rev-user{display:flex;align-items:center;gap:12px;margin-bottom:1rem}
+.rev-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent));display:grid;place-items:center;font-weight:800;font-size:0.95rem}
+.rev-name{font-weight:800;font-size:0.95rem}
+.rev-verified{color:var(--success);font-size:0.75rem;font-weight:600;display:flex;align-items:center;gap:4px}
+.rev-text{color:var(--muted);font-size:0.92rem;font-style:italic}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.82);backdrop-filter:blur(10px);z-index:200;display:none;place-items:center;padding:1rem}
+.modal-overlay.open{display:grid}
+.modal-card{background:var(--surface);border:1px solid var(--border);border-radius:24px;max-width:780px;width:100%;overflow:hidden;display:grid;grid-template-columns:1fr 1fr;position:relative;box-shadow:0 30px 60px -12px rgba(0,0,0,0.8)}
+.modal-close{position:absolute;top:18px;right:18px;z-index:10;width:38px;height:38px;border-radius:50%;background:rgba(0,0,0,0.5);border:1px solid var(--border);display:grid;place-items:center;transition:background .2s}
+.modal-close:hover{background:var(--primary)}
+.modal-img-wrap{background:linear-gradient(135deg,rgba(99,102,241,0.12),rgba(0,0,0,0.5));padding:2.5rem;display:grid;place-items:center}
+.modal-content{padding:2rem;display:flex;flex-direction:column}
+.size-selector{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:1rem 0 1.5rem}
+.size-btn{border:1px solid var(--border);padding:10px 0;border-radius:10px;font-weight:700;font-size:0.85rem;text-align:center;transition:all .2s}
+.size-btn.active,.size-btn:hover{border-color:var(--primary);background:rgba(99,102,241,0.18);color:var(--accent)}
+
+/* Drawer Cart */
+.drawer-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);z-index:300;opacity:0;pointer-events:none;transition:opacity .3s}
+.drawer-overlay.open{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:100%;max-width:440px;background:var(--surface);border-left:1px solid var(--border);z-index:301;transform:translateX(100%);transition:transform .35s cubic-bezier(0.16,1,0.3,1);display:flex;flex-direction:column;padding:1.75rem}
+.drawer-overlay.open .drawer{transform:translateX(0)}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;padding-bottom:1.25rem;border-bottom:1px solid var(--border)}
+.drawer-title{font-size:1.3rem;font-weight:900}
+.cart-items-list{flex-grow:1;overflow-y:auto;padding:1.25rem 0;display:flex;flex-direction:column;gap:1.25rem}
+.cart-item{display:flex;gap:14px;background:rgba(255,255,255,0.02);padding:12px;border-radius:12px;border:1px solid var(--border);align-items:center}
+.cart-item-img{width:68px;height:52px;background:rgba(0,0,0,0.3);border-radius:8px;display:grid;place-items:center;font-size:1.5rem}
+.cart-item-info{flex-grow:1}
+.cart-item-name{font-weight:800;font-size:0.92rem}
+.cart-item-sub{font-size:0.78rem;color:var(--muted)}
+.cart-item-price{font-weight:900;font-size:0.98rem;color:var(--accent)}
+.qty-ctrl{display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:3px 8px}
+.qty-btn{font-weight:800;padding:0 4px;font-size:0.9rem}
+.drawer-foot{padding-top:1.25rem;border-top:1px solid var(--border)}
+.promo-box{display:flex;gap:8px;margin-bottom:1rem}
+.promo-box input{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:0.85rem;flex-grow:1}
+.ship-progress{background:var(--bg);height:6px;border-radius:3px;overflow:hidden;margin-bottom:1.25rem}
+.ship-bar{height:100%;background:linear-gradient(90deg,var(--primary),var(--accent));width:0%;transition:width .3s}
+.price-row{display:flex;justify-content:space-between;margin-bottom:6px;font-size:0.9rem;color:var(--muted)}
+.price-row.total{color:var(--text);font-size:1.25rem;font-weight:900;margin-top:10px}
+
+/* Toast */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--surface-card);border:1px solid var(--primary);color:var(--text);padding:14px 28px;border-radius:35px;font-weight:700;font-size:0.92rem;box-shadow:0 12px 35px rgba(0,0,0,0.6);display:flex;align-items:center;gap:10px;z-index:400;opacity:0;transition:all .35s cubic-bezier(0.16,1,0.3,1)}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+/* Footer */
+footer{background:var(--surface);border-top:1px solid var(--border);padding:3.5rem 0 2rem;margin-top:4rem;color:var(--muted);font-size:0.9rem}
+.foot-grid{display:grid;grid-template-columns:2.2fr 1fr 1fr 1fr;gap:2rem;margin-bottom:2.5rem}
+
+@media(max-width:840px){
+  .hero{grid-template-columns:1fr;text-align:center}
+  .hero-title{font-size:2.5rem}
+  .hero-desc{margin:0 auto 1.5rem}
+  .hero-ctas{justify-content:center}
+  .modal-card{grid-template-columns:1fr}
+  .modal-img-wrap{display:none}
+  .foot-grid{grid-template-columns:1fr;gap:1.75rem}
+  .nav-links,.search-box{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- Announcement Bar -->
+<div class="top-bar">⚡ 1 TLS ROUNDTRIP WEBPAGE: 0 EXTERNAL CSS/JS/FONTS — BROTLI COMPRESSED (<14,336 BYTES)</div>
+
+<!-- Header -->
+<header>
+  <div class="container nav-wrap">
+    <a href="#" class="logo">
+      <div class="logo-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      </div>
+      <span>KINETIX</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#" class="active">Store</a></li>
+      <li><a href="#catalog">Catalog</a></li>
+      <li><a href="#reviews">Reviews</a></li>
+      <li><a href="#tech">Tech Specs</a></li>
+    </ul>
+    
+    <div class="search-box">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="Search shoes..." onkeyup="searchShoes(this.value)">
+    </div>
+
+    <div style="display:flex;align-items:center;gap:1.25rem">
+      <!-- Theme Switcher Dots -->
+      <div class="theme-dots" title="Theme Color">
+        <div class="dot" style="background:#6366f1" onclick="setTheme('indigo')"></div>
+        <div class="dot" style="background:#06b6d4" onclick="setTheme('cyan')"></div>
+        <div class="dot" style="background:#ec4899" onclick="setTheme('pink')"></div>
+        <div class="dot" style="background:#10b981" onclick="setTheme('emerald')"></div>
+      </div>
+      
+      <button class="cart-btn" onclick="toggleCart(true)" aria-label="Cart">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        <span class="cart-badge" id="cart-badge-count">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-text">
+      <div class="hero-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <span>NEW 2026 RACE EDITION</span>
+      </div>
+      <h1 class="hero-title">Defy Friction. Master Speed.</h1>
+      <p class="hero-desc">Dual-density nitrogen foam paired with a carbon propulsion matrix. Delivered in 1 single TLS packet.</p>
+      <div class="hero-ctas">
+        <button class="btn-primary" onclick="quickAddHero()">Buy Flagship Model ($189)</button>
+        <a href="#catalog" class="btn-secondary">Explore Catalog</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="float-tag tag-1">⚡ 198g Ultra-Light</div>
+      <div class="float-tag tag-2">🛡️ Carbon Plate</div>
+      <div class="float-tag tag-3">🚀 92% Energy Return</div>
+      <!-- Inline Hero Shoe SVG -->
+      <svg class="hero-shoe-svg" viewBox="0 0 500 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="heroSole" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#06b6d4"/>
+            <stop offset="100%" stop-color="#6366f1"/>
+          </linearGradient>
+          <linearGradient id="heroUpper" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#1e1b4b"/>
+            <stop offset="50%" stop-color="#312e81"/>
+            <stop offset="100%" stop-color="#0f172a"/>
+          </linearGradient>
+          <linearGradient id="swoosh" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ec4899"/>
+            <stop offset="100%" stop-color="#f59e0b"/>
+          </linearGradient>
+          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="8" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+        </defs>
+        <ellipse cx="250" cy="275" rx="200" ry="12" fill="rgba(0,0,0,0.5)" filter="url(#glow)"/>
+        <path d="M40 230 C80 260 420 260 460 215 C440 200 400 215 360 215 C260 215 140 235 40 230 Z" fill="url(#heroSole)"/>
+        <path d="M50 220 C100 240 410 240 450 205 C430 185 390 195 350 195 C250 195 130 215 50 220 Z" fill="#ffffff" opacity="0.9"/>
+        <path d="M60 210 C90 205 130 180 180 150 C230 120 280 110 330 135 C370 155 420 175 440 195 C380 195 240 195 60 210 Z" fill="url(#heroUpper)"/>
+        <path d="M120 185 C140 140 180 100 220 95 C250 90 270 110 280 130 C230 125 170 145 120 185 Z" fill="#4338ca"/>
+        <path d="M140 175 C220 145 320 130 400 170 C330 160 230 170 140 175 Z" fill="url(#swoosh)" filter="url(#glow)"/>
+        <path d="M220 120 L245 135 M235 110 L260 125 M250 102 L275 118" stroke="#06b6d4" stroke-width="4" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- Features Bar -->
+  <section class="features-bar">
+    <div class="feat-item">
+      <div class="feat-icon">🚀</div>
+      <div><div class="feat-title">1 TLS Trip Load</div><div class="feat-desc">Instant <10ms rendering</div></div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-icon">📦</div>
+      <div><div class="feat-title">Free Express Shipping</div><div class="feat-desc">On orders above $150</div></div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-icon">🛡️</div>
+      <div><div class="feat-title">30-Day Risk-Free</div><div class="feat-desc">Road & track test guarantee</div></div>
+    </div>
+    <div class="feat-item">
+      <div class="feat-icon">🌿</div>
+      <div><div class="feat-title">Carbon Neutral</div><div class="feat-desc">100% recycled aeromesh</div></div>
+    </div>
+  </section>
+
+  <!-- Catalog Section -->
+  <section id="catalog">
+    <div class="section-head">
+      <div>
+        <h2 class="section-title">Performance Footwear</h2>
+        <p style="color:var(--muted)">Filtered in real-time without DOM rebuild delay.</p>
+      </div>
+      <div class="filter-tabs">
+        <button class="tab-btn active" onclick="filterCatalog('all', this)">All</button>
+        <button class="tab-btn" onclick="filterCatalog('running', this)">Running</button>
+        <button class="tab-btn" onclick="filterCatalog('basketball', this)">Basketball</button>
+        <button class="tab-btn" onclick="filterCatalog('lifestyle', this)">Lifestyle</button>
+        <button class="tab-btn" onclick="filterCatalog('trail', this)">Trail</button>
+      </div>
+    </div>
+
+    <!-- Product Grid -->
+    <div class="product-grid" id="grid">
+      <!-- Card 1 -->
+      <div class="card" data-cat="running" data-name="kinetix aero-1 pro">
+        <div class="card-img-wrap">
+          <span class="card-badge">Carbon Matrix</span>
+          <svg class="card-shoe-svg" viewBox="0 0 400 240" fill="none" id="svg-shoe-1">
+            <path d="M30 190 C70 215 330 215 370 180 C350 165 310 175 270 175 C170 175 90 195 30 190 Z" fill="#06b6d4" class="sole-path"/>
+            <path d="M40 180 C80 160 180 90 260 100 C300 115 340 145 360 170 C300 170 180 170 40 180 Z" fill="#312e81" class="upper-path"/>
+            <path d="M120 145 C180 120 260 110 320 145 Z" fill="#ec4899" class="accent-path"/>
+          </svg>
+        </div>
+        <div class="card-body">
+          <div class="card-cat">Running / Marathon</div>
+          <h3 class="card-name">Kinetix Aero-1 Pro</h3>
+          <div class="card-stars">★★★★★ <span>(142)</span></div>
+          <div class="swatch-group">
+            <div class="swatch active" style="background:#06b6d4" onclick="changeColor('1','#06b6d4','#312e81',this)"></div>
+            <div class="swatch" style="background:#ec4899" onclick="changeColor('1','#ec4899','#831843',this)"></div>
+            <div class="swatch" style="background:#10b981" onclick="changeColor('1','#10b981','#064e3b',this)"></div>
+          </div>
+          <div class="card-footer">
+            <div class="card-price">$189</div>
+            <div class="card-actions">
+              <button class="btn-icon" onclick="openModal('Kinetix Aero-1 Pro', 189, 'Running')" title="Quick View">👁️</button>
+              <button class="btn-add" onclick="addToCart('Kinetix Aero-1 Pro', 189)">+ Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="card" data-cat="running" data-name="velox carbon sprint">
+        <div class="card-img-wrap">
+          <span class="card-badge" style="background:rgba(236,72,153,0.15);color:var(--accent-pink)">Top Speed</span>
+          <svg class="card-shoe-svg" viewBox="0 0 400 240" fill="none" id="svg-shoe-2">
+            <path d="M30 190 C70 215 330 215 370 180 C350 165 310 175 270 175 C170 175 90 195 30 190 Z" fill="#ec4899" class="sole-path"/>
+            <path d="M40 180 C80 160 180 90 260 100 C300 115 340 145 360 170 C300 170 180 170 40 180 Z" fill="#1e1b4b" class="upper-path"/>
+            <path d="M120 145 C180 120 260 110 320 145 Z" fill="#f59e0b" class="accent-path"/>
+          </svg>
+        </div>
+        <div class="card-body">
+          <div class="card-cat">Running / Sprint</div>
+          <h3 class="card-name">Velox Carbon Sprint</h3>
+          <div class="card-stars">★★★★★ <span>(89)</span></div>
+          <div class="swatch-group">
+            <div class="swatch active" style="background:#ec4899" onclick="changeColor('2','#ec4899','#1e1b4b',this)"></div>
+            <div class="swatch" style="background:#f59e0b" onclick="changeColor('2','#f59e0b','#451a03',this)"></div>
+            <div class="swatch" style="background:#6366f1" onclick="changeColor('2','#6366f1','#1e1b4b',this)"></div>
+          </div>
+          <div class="card-footer">
+            <div class="card-price">$240</div>
+            <div class="card-actions">
+              <button class="btn-icon" onclick="openModal('Velox Carbon Sprint', 240, 'Running')" title="Quick View">👁️</button>
+              <button class="btn-add" onclick="addToCart('Velox Carbon Sprint', 240)">+ Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="card" data-cat="basketball" data-name="stride phantom x">
+        <div class="card-img-wrap">
+          <span class="card-badge" style="background:rgba(99,102,241,0.15);color:var(--primary)">High Top</span>
+          <svg class="card-shoe-svg" viewBox="0 0 400 240" fill="none" id="svg-shoe-3">
+            <path d="M30 190 C70 215 330 215 370 180 C350 165 310 175 270 175 C170 175 90 195 30 190 Z" fill="#6366f1" class="sole-path"/>
+            <path d="M40 180 C80 140 140 70 230 75 C290 85 340 140 360 170 C300 170 180 170 40 180 Z" fill="#311b92" class="upper-path"/>
+            <path d="M110 135 C170 100 250 90 310 135 Z" fill="#06b6d4" class="accent-path"/>
+          </svg>
+        </div>
+        <div class="card-body">
+          <div class="card-cat">Basketball / Lockdown</div>
+          <h3 class="card-name">Stride Phantom X</h3>
+          <div class="card-stars">★★★★★ <span>(96)</span></div>
+          <div class="swatch-group">
+            <div class="swatch active" style="background:#6366f1" onclick="changeColor('3','#6366f1','#311b92',this)"></div>
+            <div class="swatch" style="background:#06b6d4" onclick="changeColor('3','#06b6d4','#0e7490',this)"></div>
+          </div>
+          <div class="card-footer">
+            <div class="card-price">$210</div>
+            <div class="card-actions">
+              <button class="btn-icon" onclick="openModal('Stride Phantom X', 210, 'Basketball')" title="Quick View">👁️</button>
+              <button class="btn-add" onclick="addToCart('Stride Phantom X', 210)">+ Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="card" data-cat="lifestyle" data-name="aura horizon low">
+        <div class="card-img-wrap">
+          <span class="card-badge" style="background:rgba(16,185,129,0.15);color:var(--success)">Eco Series</span>
+          <svg class="card-shoe-svg" viewBox="0 0 400 240" fill="none" id="svg-shoe-4">
+            <path d="M30 190 C70 215 330 215 370 180 C350 165 310 175 270 175 C170 175 90 195 30 190 Z" fill="#10b981" class="sole-path"/>
+            <path d="M40 180 C80 160 180 90 260 100 C300 115 340 145 360 170 C300 170 180 170 40 180 Z" fill="#0f172a" class="upper-path"/>
+            <path d="M120 145 C180 120 260 110 320 145 Z" fill="#06b6d4" class="accent-path"/>
+          </svg>
+        </div>
+        <div class="card-body">
+          <div class="card-cat">Lifestyle / Minimal</div>
+          <h3 class="card-name">Aura Horizon Low</h3>
+          <div class="card-stars">★★★★☆ <span>(210)</span></div>
+          <div class="swatch-group">
+            <div class="swatch active" style="background:#10b981" onclick="changeColor('4','#10b981','#0f172a',this)"></div>
+            <div class="swatch" style="background:#6366f1" onclick="changeColor('4','#6366f1','#1e1b4b',this)"></div>
+          </div>
+          <div class="card-footer">
+            <div class="card-price">$145</div>
+            <div class="card-actions">
+              <button class="btn-icon" onclick="openModal('Aura Horizon Low', 145, 'Lifestyle')" title="Quick View">👁️</button>
+              <button class="btn-add" onclick="addToCart('Aura Horizon Low', 145)">+ Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="card" data-cat="trail" data-name="kinetix terra apex">
+        <div class="card-img-wrap">
+          <span class="card-badge">Vibram Grip</span>
+          <svg class="card-shoe-svg" viewBox="0 0 400 240" fill="none" id="svg-shoe-5">
+            <path d="M30 190 C70 215 330 215 370 180 C350 165 310 175 270 175 C170 175 90 195 30 190 Z" fill="#f59e0b" class="sole-path"/>
+            <path d="M40 180 C80 160 180 90 260 100 C300 115 340 145 360 170 C300 170 180 170 40 180 Z" fill="#451a03" class="upper-path"/>
+            <path d="M120 145 C180 120 260 110 320 145 Z" fill="#10b981" class="accent-path"/>
+          </svg>
+        </div>
+        <div class="card-body">
+          <div class="card-cat">Trail / Outdoor</div>
+          <h3 class="card-name">Kinetix Terra Apex</h3>
+          <div class="card-stars">★★★★★ <span>(64)</span></div>
+          <div class="swatch-group">
+            <div class="swatch active" style="background:#f59e0b" onclick="changeColor('5','#f59e0b','#451a03',this)"></div>
+            <div class="swatch" style="background:#10b981" onclick="changeColor('5','#10b981','#064e3b',this)"></div>
+          </div>
+          <div class="card-footer">
+            <div class="card-price">$165</div>
+            <div class="card-actions">
+              <button class="btn-icon" onclick="openModal('Kinetix Terra Apex', 165, 'Trail')" title="Quick View">👁️</button>
+              <button class="btn-add" onclick="addToCart('Kinetix Terra Apex', 165)">+ Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 6 -->
+      <div class="card" data-cat="lifestyle" data-name="pulse street v2">
+        <div class="card-img-wrap">
+          <span class="card-badge" style="background:rgba(255,255,255,0.1);color:#fff">Streetwear</span>
+          <svg class="card-shoe-svg" viewBox="0 0 400 240" fill="none" id="svg-shoe-6">
+            <path d="M30 190 C70 215 330 215 370 180 C350 165 310 175 270 175 C170 175 90 195 30 190 Z" fill="#ffffff" class="sole-path"/>
+            <path d="M40 180 C80 160 180 90 260 100 C300 115 340 145 360 170 C300 170 180 170 40 180 Z" fill="#18181b" class="upper-path"/>
+            <path d="M120 145 C180 120 260 110 320 145 Z" fill="#06b6d4" class="accent-path"/>
+          </svg>
+        </div>
+        <div class="card-body">
+          <div class="card-cat">Lifestyle / Urban</div>
+          <h3 class="card-name">Pulse Street V2</h3>
+          <div class="card-stars">★★★★☆ <span>(178)</span></div>
+          <div class="swatch-group">
+            <div class="swatch active" style="background:#ffffff" onclick="changeColor('6','#ffffff','#18181b',this)"></div>
+            <div class="swatch" style="background:#ec4899" onclick="changeColor('6','#ec4899','#831843',this)"></div>
+          </div>
+          <div class="card-footer">
+            <div class="card-price">$129</div>
+            <div class="card-actions">
+              <button class="btn-icon" onclick="openModal('Pulse Street V2', 129, 'Lifestyle')" title="Quick View">👁️</button>
+              <button class="btn-add" onclick="addToCart('Pulse Street V2', 129)">+ Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reviews Section -->
+  <section id="reviews" style="margin-bottom:4rem">
+    <h2 class="section-title" style="margin-bottom:1.5rem">Verified Athlete Feedback</h2>
+    <div class="reviews-grid">
+      <div class="rev-card">
+        <div class="rev-user">
+          <div class="rev-avatar">MK</div>
+          <div><div class="rev-name">Marcus K.</div><div class="rev-verified">✓ Verified 42k Marathoner</div></div>
+        </div>
+        <div class="card-stars" style="margin-bottom:8px">★★★★★</div>
+        <div class="rev-text">"Shaved 4 minutes off my marathon PR. The responsiveness of the carbon plate with nitrogen foam is unmatched."</div>
+      </div>
+      <div class="rev-card">
+        <div class="rev-user">
+          <div class="rev-avatar" style="background:linear-gradient(135deg,var(--accent-pink),var(--accent))">SL</div>
+          <div><div class="rev-name">Sarah L.</div><div class="rev-verified">✓ Verified Buyer</div></div>
+        </div>
+        <div class="card-stars" style="margin-bottom:8px">★★★★★</div>
+        <div class="rev-text">"The entire store loaded instantly (<14kB payload) with zero webfont delay. Best online buying experience."</div>
+      </div>
+      <div class="rev-card">
+        <div class="rev-user">
+          <div class="rev-avatar" style="background:linear-gradient(135deg,var(--success),var(--primary))">DR</div>
+          <div><div class="rev-name">David R.</div><div class="rev-verified">✓ Verified Trail Runner</div></div>
+        </div>
+        <div class="card-stars" style="margin-bottom:8px">★★★★★</div>
+        <div class="rev-text">"Unbelievable grip on mud and wet granite. The Vibram outsole compound holds up over 300+ miles!"</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tech Specs Accordion / Info -->
+  <section id="tech" style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2.5rem;margin-bottom:4rem">
+    <div style="max-width:700px">
+      <span class="card-cat">Engineering Blueprint</span>
+      <h2 style="font-size:2rem;font-weight:900;margin-bottom:1rem">Why 1 TLS Roundtrip Matters</h2>
+      <p style="color:var(--muted);margin-bottom:1.5rem">By engineering this e-commerce application to fit within 14,336 bytes Brotli (the standard initial TCP congestion window of 10 MSS), the entire store loads in a single packet roundtrip over TLS.</p>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;text-align:center">
+        <div style="background:var(--bg);border:1px solid var(--border);padding:1rem;border-radius:12px">
+          <div style="font-size:1.5rem;font-weight:900;color:var(--accent)">0ms</div>
+          <div style="font-size:0.75rem;color:var(--muted)">FOUT / Font Blocking</div>
+        </div>
+        <div style="background:var(--bg);border:1px solid var(--border);padding:1rem;border-radius:12px">
+          <div style="font-size:1.5rem;font-weight:900;color:var(--success)">100%</div>
+          <div style="font-size:0.75rem;color:var(--muted)">Inline Vector SVG</div>
+        </div>
+        <div style="background:var(--bg);border:1px solid var(--border);padding:1rem;border-radius:12px">
+          <div style="font-size:1.5rem;font-weight:900;color:var(--primary)"><14kB</div>
+          <div style="font-size:0.75rem;color:var(--muted)">Brotli Compressed</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Quick View Modal -->
+<div class="modal-overlay" id="modal" onclick="closeModalOnBg(event)">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-img-wrap">
+      <svg class="hero-shoe-svg" viewBox="0 0 400 240" fill="none" id="modal-shoe-svg">
+        <path d="M30 190 C70 215 330 215 370 180 C350 165 310 175 270 175 C170 175 90 195 30 190 Z" fill="#06b6d4"/>
+        <path d="M40 180 C80 160 180 90 260 100 C300 115 340 145 360 170 C300 170 180 170 40 180 Z" fill="#312e81"/>
+        <path d="M120 145 C180 120 260 110 320 145 Z" fill="#ec4899"/>
+      </svg>
+    </div>
+    <div class="modal-content">
+      <span class="card-cat" id="modal-cat">Category</span>
+      <h2 style="font-size:1.6rem;font-weight:900;margin-bottom:6px" id="modal-title">Shoe Title</h2>
+      <div style="font-size:1.4rem;font-weight:900;color:var(--accent);margin-bottom:0.75rem" id="modal-price">$0</div>
+      <p style="color:var(--muted);font-size:0.85rem;margin-bottom:1rem">Supercharged dual-density foam core with full-length propulsion carbon plate.</p>
+      
+      <label style="font-size:0.82rem;font-weight:700">Select Size (US Men)</label>
+      <div class="size-selector">
+        <button class="size-btn" onclick="selectSize(this)">8.0</button>
+        <button class="size-btn active" onclick="selectSize(this)">9.5</button>
+        <button class="size-btn" onclick="selectSize(this)">10.0</button>
+        <button class="size-btn" onclick="selectSize(this)">11.0</button>
+        <button class="size-btn" onclick="selectSize(this)">12.0</button>
+      </div>
+
+      <button class="btn-primary" style="width:100%;margin-top:auto" id="modal-add-btn">Add to Bag</button>
+    </div>
+  </div>
+</div>
+
+<!-- Slide Cart Drawer -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="toggleCart(false)">
+  <div class="drawer" onclick="event.stopPropagation()">
+    <div class="drawer-head">
+      <div class="drawer-title">Your Shopping Bag (<span id="cart-count-title">0</span>)</div>
+      <button class="modal-close" onclick="toggleCart(false)">✕</button>
+    </div>
+    <div class="cart-items-list" id="cart-items">
+      <div style="text-align:center;color:var(--muted);margin-top:4rem">Your bag is currently empty.</div>
+    </div>
+    <div class="drawer-foot">
+      <div class="promo-box">
+        <input type="text" id="promo-input" placeholder="Promo code (Try 'TLS14')">
+        <button class="btn-secondary" style="padding:0 14px;font-size:0.85rem" onclick="applyPromo()">Apply</button>
+      </div>
+      <div style="font-size:0.78rem;color:var(--muted);margin-bottom:4px;display:flex;justify-content:space-between">
+        <span>Free Shipping Progress</span>
+        <span id="ship-status">$150 left</span>
+      </div>
+      <div class="ship-progress"><div class="ship-bar" id="ship-bar"></div></div>
+      <div class="price-row"><span>Subtotal</span><span id="cart-subtotal">$0.00</span></div>
+      <div class="price-row" id="discount-row" style="display:none;color:var(--success)"><span>Discount (10%)</span><span id="cart-discount">-$0.00</span></div>
+      <div class="price-row"><span>Express Shipping</span><span id="cart-ship">Free</span></div>
+      <div class="price-row total"><span>Total</span><span id="cart-total">$0.00</span></div>
+      <button class="btn-primary" style="width:100%;margin-top:1rem" onclick="checkout()">Proceed to Checkout ⚡</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast" id="toast">
+  <span>✓ Item added to bag!</span>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div>
+        <div class="logo" style="margin-bottom:1rem">
+          <div class="logo-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg></div>
+          <span>KINETIX</span>
+        </div>
+        <p>High-performance footwear concept engineered down to the byte. 100% self-contained in 1 TLS packet (<14,336 bytes Brotli).</p>
+      </div>
+      <div>
+        <div style="font-weight:800;color:var(--text);margin-bottom:1rem">Catalog</div>
+        <p><a href="#catalog">Running</a></p>
+        <p><a href="#catalog">Basketball</a></p>
+        <p><a href="#catalog">Lifestyle</a></p>
+      </div>
+      <div>
+        <div style="font-weight:800;color:var(--text);margin-bottom:1rem">Innovation</div>
+        <p><a href="#tech">Carbon Plate</a></p>
+        <p><a href="#tech">Nitrogen Foam</a></p>
+        <p><a href="#tech">Sub-14kB TLS</a></p>
+      </div>
+      <div>
+        <div style="font-weight:800;color:var(--text);margin-bottom:1rem">Guarantee</div>
+        <p>30-Day Trial</p>
+        <p>Free Returns</p>
+        <p>Global Shipping</p>
+      </div>
+    </div>
+    <div style="text-align:center;padding-top:1.5rem;border-top:1px solid var(--border);font-size:0.8rem">
+      © 2026 KINETIX Footwear Inc. Designed for maximum speed & sub-100ms load times.
+    </div>
+  </div>
+</footer>
+
+<!-- Interactive JS -->
+<script>
+let cart = [];
+let selectedSize = "9.5";
+let discountRate = 0;
+
+function setTheme(theme) {
+  if(theme === 'indigo') document.documentElement.removeAttribute('data-theme');
+  else document.documentElement.setAttribute('data-theme', theme);
+  showToast('🎨 Theme accent set to ' + theme.toUpperCase());
+}
+
+function changeColor(id, soleColor, upperColor, el) {
+  const parent = el.parentElement;
+  parent.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  const svg = document.getElementById('svg-shoe-' + id);
+  if(svg) {
+    const sole = svg.querySelector('.sole-path');
+    const upper = svg.querySelector('.upper-path');
+    if(sole) sole.setAttribute('fill', soleColor);
+    if(upper) upper.setAttribute('fill', upperColor);
+  }
+}
+
+function filterCatalog(cat, el) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('#grid .card').forEach(card => {
+    if(cat === 'all' || card.getAttribute('data-cat') === cat) {
+      card.style.display = 'flex';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+
+function searchShoes(query) {
+  const q = query.toLowerCase().trim();
+  document.querySelectorAll('#grid .card').forEach(card => {
+    const name = card.getAttribute('data-name') || '';
+    const cat = card.getAttribute('data-cat') || '';
+    if(name.includes(q) || cat.includes(q)) {
+      card.style.display = 'flex';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+
+function addToCart(name, price) {
+  const existing = cart.find(i => i.name === name && i.size === selectedSize);
+  if(existing) {
+    existing.qty++;
+  } else {
+    cart.push({name, price, size: selectedSize, qty: 1});
+  }
+  updateCartUI();
+  showToast('✓ Added ' + name + ' to bag');
+}
+
+function quickAddHero() {
+  addToCart('Kinetix Aero-1 Pro', 189);
+  toggleCart(true);
+}
+
+function applyPromo() {
+  const code = document.getElementById('promo-input').value.trim().toUpperCase();
+  if(code === 'TLS14') {
+    discountRate = 0.10;
+    showToast('🎉 10% Discount Applied!');
+  } else {
+    showToast('❌ Invalid code (Try "TLS14")');
+  }
+  updateCartUI();
+}
+
+function updateCartUI() {
+  const totalCount = cart.reduce((acc, i) => acc + i.qty, 0);
+  document.getElementById('cart-badge-count').textContent = totalCount;
+  document.getElementById('cart-count-title').textContent = totalCount;
+  
+  const container = document.getElementById('cart-items');
+  if(cart.length === 0) {
+    container.innerHTML = '<div style="text-align:center;color:var(--muted);margin-top:4rem">Your bag is currently empty.</div>';
+  } else {
+    container.innerHTML = cart.map((item, idx) => `
+      <div class="cart-item">
+        <div class="cart-item-img">👟</div>
+        <div class="cart-item-info">
+          <div class="cart-item-name">${item.name}</div>
+          <div class="cart-item-sub">US ${item.size}</div>
+          <div class="cart-item-price">$${item.price}</div>
+        </div>
+        <div class="qty-ctrl">
+          <button class="qty-btn" onclick="changeQty(${idx}, -1)">-</button>
+          <span>${item.qty}</span>
+          <button class="qty-btn" onclick="changeQty(${idx}, 1)">+</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  const subtotal = cart.reduce((acc, i) => acc + (i.price * i.qty), 0);
+  const discount = subtotal * discountRate;
+  const total = Math.max(0, subtotal - discount);
+
+  document.getElementById('cart-subtotal').textContent = '$' + subtotal.toFixed(2);
+  
+  if(discountRate > 0) {
+    document.getElementById('discount-row').style.display = 'flex';
+    document.getElementById('cart-discount').textContent = '-$' + discount.toFixed(2);
+  } else {
+    document.getElementById('discount-row').style.display = 'none';
+  }
+
+  document.getElementById('cart-total').textContent = '$' + total.toFixed(2);
+
+  const needed = Math.max(0, 150 - subtotal);
+  if(needed === 0) {
+    document.getElementById('ship-status').textContent = 'Free Shipping Unlocked!';
+    document.getElementById('ship-bar').style.width = '100%';
+  } else {
+    document.getElementById('ship-status').textContent = '$' + needed.toFixed(0) + ' left for Free Ship';
+    document.getElementById('ship-bar').style.width = Math.min(100, (subtotal / 150) * 100) + '%';
+  }
+}
+
+function changeQty(idx, delta) {
+  cart[idx].qty += delta;
+  if(cart[idx].qty <= 0) cart.splice(idx, 1);
+  updateCartUI();
+}
+
+function toggleCart(open) {
+  const overlay = document.getElementById('drawer-overlay');
+  if(open) overlay.classList.add('open');
+  else overlay.classList.remove('open');
+}
+
+function openModal(title, price, cat) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-price').textContent = '$' + price;
+  document.getElementById('modal-cat').textContent = cat;
+  document.getElementById('modal-add-btn').onclick = function() {
+    addToCart(title, price);
+    closeModal();
+    toggleCart(true);
+  };
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+}
+
+function closeModalOnBg(e) {
+  if(e.target.id === 'modal') closeModal();
+}
+
+function selectSize(el) {
+  document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  selectedSize = el.textContent;
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.querySelector('span').textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2600);
+}
+
+function checkout() {
+  if(cart.length === 0) return showToast('⚠️ Your bag is empty!');
+  showToast('⚡ Order simulated successfully! Thank you for buying KINETIX.');
+  cart = [];
+  discountRate = 0;
+  updateCartUI();
+  toggleCart(false);
+}
+</script>
+</body>
+</html>
