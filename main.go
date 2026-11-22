@@ -4,46 +4,61 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
+	"minimum-tls/internal/db"
 	"minimum-tls/internal/handlers"
 	"minimum-tls/internal/middleware"
 )
 
 func main() {
-	handlers.InitTemplates()
+	dbPath := os.Getenv("DB_PATH")
+	if dbPath == "" {
+		dbPath = "kinetix.db"
+	}
 
+	store, err := db.Open(dbPath)
+	if err != nil {
+		log.Fatalf("Failed to initialize SQLite database (%s): %v", dbPath, err)
+	}
+	defer store.Close()
+
+	tmpl, err := handlers.LoadTemplates(".")
+	if err != nil {
+		log.Fatalf("Failed to parse templates: %v", err)
+	}
+
+	h := handlers.New(store, tmpl)
 	mux := http.NewServeMux()
 
-	// Page routes (supports direct browser GET and HTMX partial GET)
-	mux.HandleFunc("GET /", handlers.HomeHandler)
-	mux.HandleFunc("GET /store", handlers.StoreHandler)
-	mux.HandleFunc("GET /about", handlers.AboutHandler)
-	mux.HandleFunc("GET /login", handlers.LoginViewHandler)
-	mux.HandleFunc("GET /signup", handlers.SignupViewHandler)
+	mux.HandleFunc("GET /", h.HomeHandler)
+	mux.HandleFunc("GET /store", h.StoreHandler)
+	mux.HandleFunc("GET /about", h.AboutHandler)
+	mux.HandleFunc("GET /login", h.LoginViewHandler)
+	mux.HandleFunc("GET /signup", h.SignupViewHandler)
 
-	// Explicit HTMX view partial routes
-	mux.HandleFunc("GET /view/home", handlers.HomeHandler)
-	mux.HandleFunc("GET /view/store", handlers.StoreHandler)
-	mux.HandleFunc("GET /view/about", handlers.AboutHandler)
-	mux.HandleFunc("GET /view/login", handlers.LoginViewHandler)
-	mux.HandleFunc("GET /view/signup", handlers.SignupViewHandler)
+	mux.HandleFunc("GET /view/home", h.HomeHandler)
+	mux.HandleFunc("GET /view/store", h.StoreHandler)
+	mux.HandleFunc("GET /view/about", h.AboutHandler)
+	mux.HandleFunc("GET /view/login", h.LoginViewHandler)
+	mux.HandleFunc("GET /view/signup", h.SignupViewHandler)
 
-	// Auth API
-	mux.HandleFunc("POST /api/auth/login", handlers.LoginAPIHandler)
-	mux.HandleFunc("POST /api/auth/signup", handlers.SignupAPIHandler)
-	mux.HandleFunc("POST /api/auth/logout", handlers.LogoutAPIHandler)
+	mux.HandleFunc("POST /api/auth/login", h.LoginAPIHandler)
+	mux.HandleFunc("POST /api/auth/signup", h.SignupAPIHandler)
+	mux.HandleFunc("POST /api/auth/logout", h.LogoutAPIHandler)
 
-	// Cart API
-	mux.HandleFunc("POST /api/cart/add", handlers.CartAddHandler)
-	mux.HandleFunc("GET /api/cart/drawer", handlers.CartDrawerHandler)
-	mux.HandleFunc("POST /api/cart/qty", handlers.CartQtyHandler)
-	mux.HandleFunc("POST /api/cart/promo", handlers.CartPromoHandler)
-	mux.HandleFunc("POST /api/cart/checkout", handlers.CartCheckoutHandler)
+	mux.HandleFunc("POST /api/cart/add", h.CartAddHandler)
+	mux.HandleFunc("GET /api/cart/drawer", h.CartDrawerHandler)
+	mux.HandleFunc("POST /api/cart/qty", h.CartQtyHandler)
+	mux.HandleFunc("POST /api/cart/promo", h.CartPromoHandler)
+	mux.HandleFunc("POST /api/cart/checkout", h.CartCheckoutHandler)
 
-	// Wrap in Brotli / Gzip compression middleware
 	wrappedHandler := middleware.CompressionMiddleware(mux)
 
-	port := 8080
-	fmt.Printf("🚀 KINETIX Go + HTMX Server running on http://localhost:%d\n", port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), wrappedHandler))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+	fmt.Printf("🚀 KINETIX Go + HTMX Server running on http://localhost:%s (SQLite: %s)\n", port, dbPath)
+	log.Fatal(http.ListenAndServe(":"+port, wrappedHandler))
 }

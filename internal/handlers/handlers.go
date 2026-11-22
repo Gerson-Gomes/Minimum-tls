@@ -1,327 +1,331 @@
 package handlers
 
 import (
-	"fmt"
+	"bytes"
+	"crypto/rand"
+	"encoding/hex"
+	"errors"
 	"html/template"
 	"net/http"
+	"path/filepath"
 	"strconv"
-	"sync"
+	"strings"
 
+	"golang.org/x/crypto/bcrypt"
+	"minimum-tls/internal/db"
 	"minimum-tls/internal/models"
 )
 
-type ServerState struct {
-	mu       sync.Mutex
-	Sessions map[string]*models.Cart
-	Users    map[string]*models.User
+// Handler holds dependencies for HTTP and HTMX route handlers.
+type Handler struct {
+	Store     *db.Store
+	Templates *template.Template
 }
 
-var State = &ServerState{
-	Sessions: make(map[string]*models.Cart),
-	Users:    make(map[string]*models.User),
-}
-
-var templates *template.Template
-
-func InitTemplates() {
-	var err error
-	templates, err = template.ParseGlob("templates/*.html")
-	if err != nil {
-		panic("Error parsing layout templates: " + err.Error())
-	}
-	_, err = templates.ParseGlob("templates/partials/*.html")
-	if err != nil {
-		panic("Error parsing partial templates: " + err.Error())
+// New creates a Handler backed by the given SQLite store and parsed templates.
+func New(store *db.Store, tmpl *template.Template) *Handler {
+	return &Handler{
+		Store:     store,
+		Templates: tmpl,
 	}
 }
 
-func getOrCreateSession(r *http.Request, w http.ResponseWriter) (*models.Cart, *models.User) {
-	State.mu.Lock()
-	defer State.mu.Unlock()
+// LoadTemplates parses layout and partial templates from the given base directory.
+func LoadTemplates(baseDir string) (*template.Template, error) {
+	tmpl, err := template.ParseGlob(filepath.Join(baseDir, "templates", "*.html"))
+	if err != nil {
+		return nil, err
+	}
+	if _, err := tmpl.ParseGlob(filepath.Join(baseDir, "templates", "partials", "*.html")); err != nil {
+		return nil, err
+	}
+	return tmpl, nil
+}
 
+func newID(prefix string) string {
+	var b [12]byte
+	if _, err := rand.Read(b[:]); err != nil {
+		return prefix + "fallback"
+	}
+	return prefix + hex.EncodeToString(b[:])
+}
+
+func (h *Handler) getOrCreateSessionID(r *http.Request, w http.ResponseWriter) string {
 	cookie, err := r.Cookie("session_id")
-	sessionID := ""
-	if err != nil || cookie.Value == "" {
-		sessionID = fmt.Sprintf("sess_%d", SystemTimeNano())
-		http.SetCookie(w, &http.Cookie{
-			Name:     "session_id",
-			Value:    sessionID,
-			Path:     "/",
-			HttpOnly: true,
-		})
-	} else {
-		sessionID = cookie.Value
+	if err == nil && cookie.Value != "" {
+		return cookie.Value
 	}
-
-	cart, exists := State.Sessions[sessionID]
-	if !exists {
-		cart = &models.Cart{Items: []models.CartItem{}}
-		State.Sessions[sessionID] = cart
-	}
-
-	user := State.Users[sessionID]
-	return cart, user
+	sessionID := newID("sess_")
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session_id",
+		Value:    sessionID,
+		Path:     "/",
+		HttpOnly: true,
+	})
+	return sessionID
 }
 
-func RenderPage(w http.ResponseWriter, r *http.Request, activePage string, partialName string) {
-	cart, user := getOrCreateSession(r, w)
+func (h *Handler) getSessionState(r *http.Request, w http.ResponseWriter) (string, *models.Cart, *models.User, error) {
+	sessionID := h.getOrCreateSessionID(r, w)
+	cart, user, err := h.Store.GetSessionCartAndUser(sessionID)
+	if err != nil {
+		return "", nil, nil, err
+	}
+	return sessionID, cart, user, nil
+}
 
-	// Check if this is an HTMX request requesting only partial main view
+// RenderPage renders either an HTMX partial or the full layout page.
+func (h *Handler) RenderPage(w http.ResponseWriter, r *http.Request, activePage, partialName string, shoes []models.Shoe) {
+	_, cart, user, err := h.getSessionState(r, w)
+	if err != nil {
+		http.Error(w, "Database error", http.StatusInternalServerError)
+		return
+	}
+
+	data := map[string]interface{}{
+		"Cart":  cart,
+		"User":  user,
+		"Shoes": shoes,
+	}
+
 	if r.Header.Get("HX-Request") == "true" && r.Header.Get("HX-Target") == "main-content" {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		err := templates.ExecuteTemplate(w, partialName+".html", map[string]interface{}{
-			"Cart": cart,
-			"User": user,
-		})
-		if err != nil {
-			http.Error(w, err.Error(), 500)
+		if err := h.Templates.ExecuteTemplate(w, partialName+".html", data); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 		return
 	}
 
-	// Full Page Rendering
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	var buf template.HTML
-	var b bytesBuffer
-	err := templates.ExecuteTemplate(&b, partialName+".html", map[string]interface{}{
-		"Cart": cart,
-		"User": user,
-	})
-	if err != nil {
-		http.Error(w, err.Error(), 500)
+	var b bytes.Buffer
+	if err := h.Templates.ExecuteTemplate(&b, partialName+".html", data); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
 	}
-	buf = template.HTML(b.String())
 
-	templates.ExecuteTemplate(w, "layout.html", map[string]interface{}{
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	_ = h.Templates.ExecuteTemplate(w, "layout.html", map[string]interface{}{
 		"ActivePage": activePage,
-		"Content":    buf,
+		"Content":    template.HTML(b.String()),
 		"Cart":       cart,
 		"User":       user,
 	})
 }
 
-type bytesBuffer struct {
-	buf []byte
-}
-
-func (b *bytesBuffer) Write(p []byte) (n int, err error) {
-	b.buf = append(b.buf, p...)
-	return len(p), nil
-}
-
-func (b *bytesBuffer) String() string {
-	return string(b.buf)
-}
-
-func SystemTimeNano() int64 {
-	return 1770000000000000000
-}
-
-// Page Handlers
-func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	RenderPage(w, r, "home", "home")
-}
-
-func StoreHandler(w http.ResponseWriter, r *http.Request) {
-	RenderPage(w, r, "store", "store")
-}
-
-func AboutHandler(w http.ResponseWriter, r *http.Request) {
-	RenderPage(w, r, "about", "about")
-}
-
-func LoginViewHandler(w http.ResponseWriter, r *http.Request) {
-	RenderPage(w, r, "login", "login")
-}
-
-func SignupViewHandler(w http.ResponseWriter, r *http.Request) {
-	RenderPage(w, r, "signup", "signup")
-}
-
-// Auth API Handlers
-func LoginAPIHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", 405)
+func (h *Handler) HomeHandler(w http.ResponseWriter, r *http.Request) {
+	shoes, err := h.Store.ListShoes(true)
+	if err != nil {
+		http.Error(w, "Failed to load catalog", http.StatusInternalServerError)
 		return
 	}
-	r.ParseForm()
-	email := r.FormValue("email")
-	name := "Athlete"
-	if len(email) > 0 {
-		name = email[0:1]
-		if idx := len(email); idx > 0 {
-			name = email
-		}
+	h.RenderPage(w, r, "home", "home", shoes)
+}
+
+func (h *Handler) StoreHandler(w http.ResponseWriter, r *http.Request) {
+	shoes, err := h.Store.ListShoes(false)
+	if err != nil {
+		http.Error(w, "Failed to load catalog", http.StatusInternalServerError)
+		return
+	}
+	h.RenderPage(w, r, "store", "store", shoes)
+}
+
+func (h *Handler) AboutHandler(w http.ResponseWriter, r *http.Request) {
+	h.RenderPage(w, r, "about", "about", nil)
+}
+
+func (h *Handler) LoginViewHandler(w http.ResponseWriter, r *http.Request) {
+	h.RenderPage(w, r, "login", "login", nil)
+}
+
+func (h *Handler) SignupViewHandler(w http.ResponseWriter, r *http.Request) {
+	h.RenderPage(w, r, "signup", "signup", nil)
+}
+
+func (h *Handler) LoginAPIHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Invalid form", http.StatusBadRequest)
+		return
+	}
+	email := strings.TrimSpace(strings.ToLower(r.FormValue("email")))
+	password := r.FormValue("password")
+
+	user, hash, err := h.Store.GetUserByEmail(email)
+	if err != nil {
+		http.Error(w, "Invalid email or password", http.StatusUnauthorized)
+		return
+	}
+	if err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password)); err != nil {
+		http.Error(w, "Invalid email or password", http.StatusUnauthorized)
+		return
 	}
 
-	State.mu.Lock()
-	cookie, _ := r.Cookie("session_id")
-	sessID := ""
-	if cookie != nil {
-		sessID = cookie.Value
+	sessID := h.getOrCreateSessionID(r, w)
+	if err := h.Store.AttachUserToSession(sessID, user.ID); err != nil {
+		http.Error(w, "Failed to save session", http.StatusInternalServerError)
+		return
 	}
-	if sessID != "" {
-		State.Users[sessID] = &models.User{
-			ID:     "usr_1",
-			Name:   name,
-			Email:  email,
-			Avatar: "⚡",
-		}
-	}
-	State.mu.Unlock()
 
 	w.Header().Set("HX-Redirect", "/")
-	HomeHandler(w, r)
+	h.HomeHandler(w, r)
 }
 
-func SignupAPIHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) SignupAPIHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", 405)
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	r.ParseForm()
-	name := r.FormValue("name")
-	email := r.FormValue("email")
+	if err := r.ParseForm(); err != nil {
+		http.Error(w, "Invalid form", http.StatusBadRequest)
+		return
+	}
+	name := strings.TrimSpace(r.FormValue("name"))
+	email := strings.TrimSpace(strings.ToLower(r.FormValue("email")))
+	password := r.FormValue("password")
 	if name == "" {
 		name = "Runner"
 	}
-
-	State.mu.Lock()
-	cookie, _ := r.Cookie("session_id")
-	sessID := ""
-	if cookie != nil {
-		sessID = cookie.Value
-	}
-	if sessID != "" {
-		State.Users[sessID] = &models.User{
-			ID:     "usr_new",
-			Name:   name,
-			Email:  email,
-			Avatar: "🚀",
-		}
-	}
-	State.mu.Unlock()
-
-	w.Header().Set("HX-Redirect", "/")
-	HomeHandler(w, r)
-}
-
-func LogoutAPIHandler(w http.ResponseWriter, r *http.Request) {
-	State.mu.Lock()
-	cookie, _ := r.Cookie("session_id")
-	if cookie != nil {
-		delete(State.Users, cookie.Value)
-	}
-	State.mu.Unlock()
-
-	w.Header().Set("HX-Redirect", "/")
-	HomeHandler(w, r)
-}
-
-// Cart API Handlers
-func CartAddHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", 405)
+	if email == "" || password == "" {
+		http.Error(w, "Email and password are required", http.StatusBadRequest)
 		return
 	}
-	cart, _ := getOrCreateSession(r, w)
 
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		http.Error(w, "Failed to process password", http.StatusInternalServerError)
+		return
+	}
+
+	user, err := h.Store.CreateUser(newID("usr_"), name, email, string(hash), "🚀")
+	if err != nil {
+		if strings.Contains(err.Error(), "UNIQUE") {
+			http.Error(w, "Email already registered", http.StatusConflict)
+			return
+		}
+		http.Error(w, "Failed to create user", http.StatusInternalServerError)
+		return
+	}
+
+	sessID := h.getOrCreateSessionID(r, w)
+	if err := h.Store.AttachUserToSession(sessID, user.ID); err != nil {
+		http.Error(w, "Failed to save session", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("HX-Redirect", "/")
+	h.HomeHandler(w, r)
+}
+
+func (h *Handler) LogoutAPIHandler(w http.ResponseWriter, r *http.Request) {
+	if cookie, err := r.Cookie("session_id"); err == nil && cookie.Value != "" {
+		_ = h.Store.ClearSessionUser(cookie.Value)
+	}
+	w.Header().Set("HX-Redirect", "/")
+	h.HomeHandler(w, r)
+}
+
+func (h *Handler) CartAddHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	sessID := h.getOrCreateSessionID(r, w)
 	shoeID := r.URL.Query().Get("shoe_id")
 	name := r.URL.Query().Get("name")
-	priceStr := r.URL.Query().Get("price")
-	price, _ := strconv.ParseFloat(priceStr, 64)
+	price, _ := strconv.ParseFloat(r.URL.Query().Get("price"), 64)
+	size := r.URL.Query().Get("size")
 
-	State.mu.Lock()
-	found := false
-	for i, item := range cart.Items {
-		if item.ShoeID == shoeID {
-			cart.Items[i].Qty++
-			found = true
-			break
-		}
+	if err := h.Store.AddToCart(sessID, shoeID, name, price, size); err != nil {
+		http.Error(w, "Failed to add item", http.StatusInternalServerError)
+		return
 	}
-	if !found {
-		cart.Items = append(cart.Items, models.CartItem{
-			ShoeID: shoeID,
-			Name:   name,
-			Price:  price,
-			Size:   "9.5",
-			Qty:    1,
-		})
+
+	cart, _, err := h.Store.GetSessionCartAndUser(sessID)
+	if err != nil {
+		http.Error(w, "Failed to load cart", http.StatusInternalServerError)
+		return
 	}
-	State.mu.Unlock()
 
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	w.Write([]byte(strconv.Itoa(cart.TotalCount())))
+	_, _ = w.Write([]byte(strconv.Itoa(cart.TotalCount())))
 }
 
-func CartDrawerHandler(w http.ResponseWriter, r *http.Request) {
-	cart, _ := getOrCreateSession(r, w)
+func (h *Handler) CartDrawerHandler(w http.ResponseWriter, r *http.Request) {
+	_, cart, _, err := h.getSessionState(r, w)
+	if err != nil {
+		http.Error(w, "Failed to load cart", http.StatusInternalServerError)
+		return
+	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	templates.ExecuteTemplate(w, "cart_drawer.html", map[string]interface{}{
+	if err := h.Templates.ExecuteTemplate(w, "cart_drawer.html", map[string]interface{}{
 		"Cart": cart,
-	})
+	}); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
-func CartQtyHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) CartQtyHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", 405)
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	cart, _ := getOrCreateSession(r, w)
-	idxStr := r.URL.Query().Get("idx")
-	deltaStr := r.URL.Query().Get("delta")
-	idx, _ := strconv.Atoi(idxStr)
-	delta, _ := strconv.Atoi(deltaStr)
-
-	State.mu.Lock()
-	if idx >= 0 && idx < len(cart.Items) {
-		cart.Items[idx].Qty += delta
-		if cart.Items[idx].Qty <= 0 {
-			cart.Items = append(cart.Items[:idx], cart.Items[idx+1:]...)
-		}
+	sessID := h.getOrCreateSessionID(r, w)
+	itemID, err := strconv.ParseInt(r.URL.Query().Get("id"), 10, 64)
+	if err != nil {
+		http.Error(w, "Invalid item id", http.StatusBadRequest)
+		return
 	}
-	State.mu.Unlock()
+	delta, _ := strconv.Atoi(r.URL.Query().Get("delta"))
 
-	CartDrawerHandler(w, r)
+	if err := h.Store.UpdateCartItemQty(sessID, itemID, delta); err != nil {
+		http.Error(w, "Failed to update quantity", http.StatusInternalServerError)
+		return
+	}
+
+	h.CartDrawerHandler(w, r)
 }
 
-func CartPromoHandler(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) CartPromoHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", 405)
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	r.ParseForm()
-	code := r.FormValue("promo")
-
-	cart, _ := getOrCreateSession(r, w)
-	State.mu.Lock()
-	cart.PromoCode = code
+	_ = r.ParseForm()
+	code := strings.TrimSpace(r.FormValue("promo"))
+	rate := 0.0
 	if code == "TLS14" {
-		cart.DiscountRate = 0.10
-	} else {
-		cart.DiscountRate = 0.0
+		rate = 0.10
 	}
-	State.mu.Unlock()
 
-	CartDrawerHandler(w, r)
-}
-
-func CartCheckoutHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		http.Error(w, "Method not allowed", 405)
+	sessID := h.getOrCreateSessionID(r, w)
+	if err := h.Store.SetCartPromo(sessID, code, rate); err != nil {
+		http.Error(w, "Failed to apply promo", http.StatusInternalServerError)
 		return
 	}
-	cart, _ := getOrCreateSession(r, w)
-	State.mu.Lock()
-	cart.Items = []models.CartItem{}
-	cart.DiscountRate = 0.0
-	cart.PromoCode = ""
-	State.mu.Unlock()
+
+	h.CartDrawerHandler(w, r)
+}
+
+func (h *Handler) CartCheckoutHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+	sessID := h.getOrCreateSessionID(r, w)
+	if err := h.Store.CheckoutSession(newID("ord_"), sessID); err != nil {
+		if errors.Is(err, db.ErrEmptyCart) {
+			http.Error(w, "Your bag is empty", http.StatusBadRequest)
+			return
+		}
+		http.Error(w, "Checkout failed", http.StatusInternalServerError)
+		return
+	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	w.Write([]byte(`<div style="text-align:center;padding:3rem 1rem">
+	_, _ = w.Write([]byte(`<div style="text-align:center;padding:3rem 1rem">
 		<div style="font-size:3rem;margin-bottom:1rem">⚡</div>
 		<h2 style="font-size:1.4rem;font-weight:900;margin-bottom:0.5rem">Order Confirmed!</h2>
 		<p style="color:var(--muted);font-size:0.9rem">Thank you for testing the KINETIX Go + HTMX platform.</p>

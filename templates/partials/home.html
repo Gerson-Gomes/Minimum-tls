@@ -68,61 +68,33 @@
       </div>
       <a href="/store" hx-get="/view/store" hx-target="#main-content" hx-push-url="/store" class="btn-secondary" style="font-size:0.85rem;padding:6px 14px">View All Models →</a>
     </div>
-    <div class="product-grid">
-      <div class="card">
-        <div class="card-img-wrap">
-          <span class="card-badge">Carbon Matrix</span>
-          <svg class="card-shoe-svg" viewBox="0 0 400 240" fill="none">
-            <path d="M30 190 C70 215 330 215 370 180 C350 165 310 175 270 175 C170 175 90 195 30 190 Z" fill="#06b6d4"/>
-            <path d="M40 180 C80 160 180 90 260 100 C300 115 340 145 360 170 C300 170 180 170 40 180 Z" fill="#312e81"/>
-            <path d="M120 145 C180 120 260 110 320 145 Z" fill="#ec4899"/>
-          </svg>
-        </div>
-        <div class="card-body">
-          <div class="card-cat">Running</div>
-          <h3 class="card-name">Kinetix Aero-1 Pro</h3>
-          <div class="card-footer">
-            <div class="card-price">$189</div>
-            <button class="btn-add" hx-post="/api/cart/add?shoe_id=1&name=Kinetix+Aero-1+Pro&price=189" hx-target="#cart-badge-count" onclick="showToast('✓ Added Kinetix Aero-1 Pro to bag')">+ Add</button>
-          </div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-img-wrap">
-          <span class="card-badge" style="background:rgba(236,72,153,0.15);color:var(--accent-pink)">Top Speed</span>
-          <svg class="card-shoe-svg" viewBox="0 0 400 240" fill="none">
-            <path d="M30 190 C70 215 330 215 370 180 C350 165 310 175 270 175 C170 175 90 195 30 190 Z" fill="#ec4899"/>
-            <path d="M40 180 C80 160 180 90 260 100 C300 115 340 145 360 170 C300 170 180 170 40 180 Z" fill="#1e1b4b"/>
-            <path d="M120 145 C180 120 260 110 320 145 Z" fill="#f59e0b"/>
-          </svg>
-        </div>
-        <div class="card-body">
-          <div class="card-cat">Sprint</div>
-          <h3 class="card-name">Velox Carbon Sprint</h3>
-          <div class="card-footer">
-            <div class="card-price">$240</div>
-            <button class="btn-add" hx-post="/api/cart/add?shoe_id=2&name=Velox+Carbon+Sprint&price=240" hx-target="#cart-badge-count" onclick="showToast('✓ Added Velox Carbon Sprint to bag')">+ Add</button>
-          </div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-img-wrap">
-          <span class="card-badge" style="background:rgba(99,102,241,0.15);color:var(--primary)">High Top</span>
-          <svg class="card-shoe-svg" viewBox="0 0 400 240" fill="none">
-            <path d="M30 190 C70 215 330 215 370 180 C350 165 310 175 270 175 C170 175 90 195 30 190 Z" fill="#6366f1"/>
-            <path d="M40 180 C80 140 140 70 230 75 C290 85 340 140 360 170 C300 170 180 170 40 180 Z" fill="#311b92"/>
-            <path d="M110 135 C170 100 250 90 310 135 Z" fill="#06b6d4"/>
-          </svg>
-        </div>
-        <div class="card-body">
-          <div class="card-cat">Basketball</div>
-          <h3 class="card-name">Stride Phantom X</h3>
-          <div class="card-footer">
-            <div class="card-price">$210</div>
-            <button class="btn-add" hx-post="/api/cart/add?shoe_id=3&name=Stride+Phantom+X&price=210" hx-target="#cart-badge-count" onclick="showToast('✓ Added Stride Phantom X to bag')">+ Add</button>
-          </div>
-        </div>
-      </div>
+    {{if eq (len .Shoes) 0}}
+    <div style="text-align:center;padding:3rem 1.5rem;background:var(--surface);border:1px solid var(--border);border-radius:18px">
+      <p style="color:var(--muted);font-size:0.9rem">No trending models yet. Add items with <code>trending = 1</code> in SQLite.</p>
     </div>
+    {{else}}
+    <div class="product-grid">
+      {{range .Shoes}}
+      <div class="card">
+        <div class="card-img-wrap">
+          {{if .Badge}}<span class="card-badge"{{if .BadgeStyle}} style="{{.BadgeStyle}}"{{end}}>{{.Badge}}</span>{{end}}
+          <svg class="card-shoe-svg" viewBox="0 0 400 240" fill="none">
+            <path d="M30 190 C70 215 330 215 370 180 C350 165 310 175 270 175 C170 175 90 195 30 190 Z" fill="{{.SoleColor}}"/>
+            <path d="M40 180 C80 160 180 90 260 100 C300 115 340 145 360 170 C300 170 180 170 40 180 Z" fill="{{.UpperColor}}"/>
+            <path d="M120 145 C180 120 260 110 320 145 Z" fill="{{.AccentColor}}"/>
+          </svg>
+        </div>
+        <div class="card-body">
+          <div class="card-cat">{{.Category}}</div>
+          <h3 class="card-name">{{.Name}}</h3>
+          <div class="card-footer">
+            <div class="card-price">${{printf "%.0f" .Price}}</div>
+            <button class="btn-add" hx-post="/api/cart/add?shoe_id={{.ID}}&name={{urlquery .Name}}&price={{printf "%.2f" .Price}}" hx-target="#cart-badge-count" onclick="showToast('✓ Added {{.Name}} to bag')">+ Add</button>
+          </div>
+        </div>
+      </div>
+      {{end}}
+    </div>
+    {{end}}
   </div>
 </div>

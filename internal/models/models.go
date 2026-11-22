@@ -14,6 +14,7 @@ type Shoe struct {
 	UpperColor  string   `json:"upper_color"`
 	AccentColor string   `json:"accent_color"`
 	Colors      []string `json:"colors"`
+	Trending    bool     `json:"trending"`
 }
 
 type User struct {
@@ -25,11 +26,34 @@ type User struct {
 }
 
 type CartItem struct {
+	ID     int64   `json:"id"`
 	ShoeID string  `json:"shoe_id"`
 	Name   string  `json:"name"`
 	Price  float64 `json:"price"`
 	Size   string  `json:"size"`
 	Qty    int     `json:"qty"`
+}
+
+type Order struct {
+	ID           string      `json:"id"`
+	SessionID    string      `json:"session_id"`
+	UserID       string      `json:"user_id"`
+	PromoCode    string      `json:"promo_code"`
+	DiscountRate float64     `json:"discount_rate"`
+	Subtotal     float64     `json:"subtotal"`
+	Discount     float64     `json:"discount"`
+	Total        float64     `json:"total"`
+	Items        []OrderItem `json:"items"`
+}
+
+type OrderItem struct {
+	ID      int64   `json:"id"`
+	OrderID string  `json:"order_id"`
+	ShoeID  string  `json:"shoe_id"`
+	Name    string  `json:"name"`
+	Price   float64 `json:"price"`
+	Size    string  `json:"size"`
+	Qty     int     `json:"qty"`
 }
 
 type Cart struct {

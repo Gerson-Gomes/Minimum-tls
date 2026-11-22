@@ -16,9 +16,9 @@
         <div class="cart-item-price">${{printf "%.2f" $item.Price}}</div>
       </div>
       <div class="qty-ctrl">
-        <button class="qty-btn" hx-post="/api/cart/qty?idx={{$idx}}&delta=-1" hx-target="#drawer-container">-</button>
+        <button class="qty-btn" hx-post="/api/cart/qty?id={{$item.ID}}&delta=-1" hx-target="#drawer-container">-</button>
         <span>{{$item.Qty}}</span>
-        <button class="qty-btn" hx-post="/api/cart/qty?idx={{$idx}}&delta=1" hx-target="#drawer-container">+</button>
+        <button class="qty-btn" hx-post="/api/cart/qty?id={{$item.ID}}&delta=1" hx-target="#drawer-container">+</button>
       </div>
     </div>
     {{end}}
